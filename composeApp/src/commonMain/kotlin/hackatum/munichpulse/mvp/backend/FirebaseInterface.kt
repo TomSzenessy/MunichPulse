@@ -4,10 +4,13 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.auth.AuthCredential
+import dev.gitlive.firebase.firestore.DocumentReference
 import dev.gitlive.firebase.firestore.firestore
 import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.model.User
-import kotlin.String
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 const val USER_COLLECTION: String = "users"
@@ -15,6 +18,10 @@ const val USER_UID_PARAM: String = "uid"
 const val USER_IS_LOCAL_PARAM: String = "isLocal"
 const val USER_NAME_PARAM: String = "name"
 
+// Toggle to route Firebase SDKs to local emulator. Keep false for production.
+const val USE_FIREBASE_EMULATOR: Boolean = true
+
+// Host to reach the local Emulator Suite from the app runtime.
 const val EMULATOR_IP: String = "131.159.207.110"
 
 
@@ -23,7 +30,10 @@ const val EVENT_NAME_PARAM: String = "name"
 const val EVENT_LOCATION_PARAM: String = "location"
 const val EVENT_DATA_BEGIN_PARAM: String = "begin_date"
 const val EVENT_GROUPS_SUB_COLLECTION: String = "groups"
+const val EVENT_INDIVIDUALS_SUB_COLLECTION: String = "individuals"
 const val EVENT_GROUPS_USERS_LIST: String = "users"
+// Maintained numeric mirror of users list size to support efficient queries
+const val EVENT_GROUPS_USERS_COUNT: String = "usersCount"
 const val EVENT_TRACKS_SUB_COLLECTION: String = "tracks"
 const val EVENT_TRACK_POSITION_PARAM: String = "gps_coords"
 const val EVENT_IMAGE_URL_PARAM: String = "image_url"
@@ -38,8 +48,11 @@ class FirebaseInterface {
 
         fun getInstance(): FirebaseInterface {
             if (!initialized) {
-                Firebase.auth.useEmulator(EMULATOR_IP, 9099)
-                Firebase.firestore.useEmulator(EMULATOR_IP, 8080)
+                // Only use emulators when explicitly enabled
+                if (USE_FIREBASE_EMULATOR) {
+                    Firebase.auth.useEmulator(EMULATOR_IP, 9099)
+                    Firebase.firestore.useEmulator(EMULATOR_IP, 8080)
+                }
                 initialized = true
             }
             return INSTANCE
@@ -164,20 +177,27 @@ class FirebaseInterface {
      */
     suspend fun addUsersToGroup(eventId: String, groupId: String, users: List<User>) {
         val db = Firebase.firestore
-        val userList = users.map { user ->
-            mapOf(
-                USER_UID_PARAM to user.id,
-                USER_NAME_PARAM to user.name,
-                USER_IS_LOCAL_PARAM to user.isLocal
-            )
-        }
+        val userIds = users.map { it.id }
 
-        db.collection(EVENT_COLLECTION)
+        val groupRef = db.collection(EVENT_COLLECTION)
             .document(eventId)
             .collection(EVENT_GROUPS_SUB_COLLECTION)
             .document(groupId)
-            // Merge so other fields on the group doc are preserved
-            .set(mapOf(EVENT_GROUPS_USERS_LIST to userList), merge = true)
+
+        val currentUsers = try {
+            @Suppress("UNCHECKED_CAST")
+            (groupRef.get().get(EVENT_GROUPS_USERS_LIST) as? List<String>) ?: emptyList()
+        } catch (_: Throwable) { emptyList() }
+
+        // Merge and avoid duplicates
+        val updated = (currentUsers + userIds).distinct()
+        groupRef.set(
+            mapOf(
+                EVENT_GROUPS_USERS_LIST to updated,
+                EVENT_GROUPS_USERS_COUNT to updated.size
+            ),
+            merge = true
+        )
     }
 
     /** Convenience function to add a single user to a group. */
@@ -212,5 +232,104 @@ class FirebaseInterface {
         }
 
         return eventList
+    }
+
+    /**
+     * Add a user id into the event's individuals sub-collection.
+     * Writes events/{eventId}/individuals/{userId} with minimal payload.
+     */
+    suspend fun addUserToEventIndividuals(eventId: String, userId: String) {
+        val db = Firebase.firestore
+        db.collection(EVENT_COLLECTION)
+            .document(eventId)
+            .collection(EVENT_INDIVIDUALS_SUB_COLLECTION)
+            .document(userId)
+            .set(mapOf(USER_UID_PARAM to userId), merge = true)
+    }
+
+    /**
+     * Add the user to any available group (users list size < maxSize). If none exists, a new
+     * group is created. The group document maintains a simple list of user ids under "users".
+     * Returns the groupId the user has been added to.
+     */
+    suspend fun addUserToAvailableGroup(eventId: String, userId: String, maxSize: Int = 5): String {
+        val db = Firebase.firestore
+        val groupsColl = db.collection(EVENT_COLLECTION)
+            .document(eventId)
+            .collection(EVENT_GROUPS_SUB_COLLECTION)
+
+        // Try to find an existing group with space via query (do NOT fetch all groups)
+        val querySnapshot = groupsColl
+            .where { EVENT_GROUPS_USERS_COUNT lessThan maxSize }
+            .limit(1)
+            .get()
+
+        var targetGroupRef: DocumentReference? = null
+        var users: List<String> = emptyList()
+        if (querySnapshot.documents.isNotEmpty()) {
+            val doc = querySnapshot.documents.first()
+            users = try {
+                @Suppress("UNCHECKED_CAST")
+                (doc.get(EVENT_GROUPS_USERS_LIST) as? List<String>) ?: emptyList()
+            } catch (_: Throwable) { emptyList() }
+            // If user already present, return immediately
+            if (users.contains(userId)) {
+                return doc.id
+            }
+            targetGroupRef = doc.reference
+        }
+
+        // If no existing group found, create a new one
+        if (targetGroupRef == null) {
+            val newDocRef = groupsColl.add(
+                mapOf(
+                    EVENT_GROUPS_USERS_LIST to listOf<String>(),
+                    EVENT_GROUPS_USERS_COUNT to 0
+                )
+            )
+            targetGroupRef = newDocRef
+        }
+
+        // Append the user id if not present
+        if (!users.contains(userId)) {
+            val updated = users + userId
+            targetGroupRef.set(
+                mapOf(
+                    EVENT_GROUPS_USERS_LIST to updated,
+                    EVENT_GROUPS_USERS_COUNT to updated.size
+                ),
+                merge = true
+            )
+        }
+
+        return targetGroupRef.id
+    }
+
+    /**
+     * Add the userId to the specified group users list (stored as List<String> of UIDs).
+     * Creates the group document if it doesn't exist yet.
+     */
+    suspend fun addUserIdToGroup(eventId: String, groupId: String, userId: String) {
+        val db = Firebase.firestore
+        val groupRef = db.collection(EVENT_COLLECTION)
+            .document(eventId)
+            .collection(EVENT_GROUPS_SUB_COLLECTION)
+            .document(groupId)
+
+        val currentUsers = try {
+            @Suppress("UNCHECKED_CAST")
+            (groupRef.get().get(EVENT_GROUPS_USERS_LIST) as? List<String>) ?: emptyList()
+        } catch (_: Throwable) { emptyList() }
+
+        if (!currentUsers.contains(userId)) {
+            val updated = currentUsers + userId
+            groupRef.set(
+                mapOf(
+                    EVENT_GROUPS_USERS_LIST to updated,
+                    EVENT_GROUPS_USERS_COUNT to updated.size
+                ),
+                merge = true
+            )
+        }
     }
 }

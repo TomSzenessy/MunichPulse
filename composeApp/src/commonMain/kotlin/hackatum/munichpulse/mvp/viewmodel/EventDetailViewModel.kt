@@ -2,6 +2,7 @@ package hackatum.munichpulse.mvp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import hackatum.munichpulse.mvp.DataController
 import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.repository.EventRepository
 import hackatum.munichpulse.mvp.data.repository.MockEventRepository
@@ -22,6 +23,15 @@ class EventDetailViewModel(
             repository.getEventById(eventId).collect {
                 _event.value = it
             }
+        }
+    }
+
+    /**
+     * Add a user to a specific group for this event (delegates to DataController -> Firebase).
+     */
+    fun addUserToSpecificGroup(eventId: String, groupId: String) {
+        viewModelScope.launch {
+            DataController.getInstance().addUserToEventGroup(eventId, groupId)
         }
     }
 }
