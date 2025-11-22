@@ -8,6 +8,7 @@ import hackatum.munichpulse.mvp.ui.MainScreen
 import hackatum.munichpulse.mvp.ui.ProvideAppStrings
 import hackatum.munichpulse.mvp.ui.theme.UrbanPulseTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.getValue
 
 @Composable
 fun App(database: MunichPulseDatabase) {
