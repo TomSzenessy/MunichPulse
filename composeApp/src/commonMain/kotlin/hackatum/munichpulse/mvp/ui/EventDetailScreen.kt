@@ -81,12 +81,18 @@ fun EventDetailScreen(
                                     )
                                     // Emphasize joining a random group as the primary action
                                     Button(
-                                        onClick = { openJoinDialog.value = false },
+                                        onClick = {
+                                            openJoinDialog.value = false
+                                            viewModel.addUserToEventGroup(eventId)
+                                                  },
                                         modifier = Modifier.fillMaxWidth()
                                     ) { Text("Join Random Group of 5") }
                                     // Solo join as secondary/outlined option
                                     OutlinedButton(
-                                        onClick = { openJoinDialog.value = false },
+                                        onClick = {
+                                            openJoinDialog.value = false
+                                            viewModel.addUserToIndividualEventGroup(eventId)
+                                        },
                                         modifier = Modifier.fillMaxWidth()
                                     ) { Text("Join Solo") }
                                 }

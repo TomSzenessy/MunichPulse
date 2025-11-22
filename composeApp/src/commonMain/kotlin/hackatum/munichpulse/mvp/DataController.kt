@@ -11,15 +11,15 @@ class DataController {
     }
 
     // Expose suspend functions to be called from ViewModels
-    suspend fun addUserToEventGroup(eventId: String, userId: String): String {
+    suspend fun addUserToEventGroup(eventId: String): String {
         return FirebaseInterface
             .getInstance()
-            .addUserToAvailableGroup(eventId, userId, maxSize = 5)
+            .addUserToAvailableGroup(eventId, FirebaseInterface.getInstance().getUserId(), maxSize = 5)
     }
 
-    suspend fun addUserToEventIndividuals(eventId: String, userId: String) {
+    suspend fun addUserToEventIndividuals(eventId: String) {
         FirebaseInterface
             .getInstance()
-            .addUserToEventIndividuals(eventId, userId)
+            .addUserToEventIndividuals(eventId, FirebaseInterface.getInstance().getUserId())
     }
 }

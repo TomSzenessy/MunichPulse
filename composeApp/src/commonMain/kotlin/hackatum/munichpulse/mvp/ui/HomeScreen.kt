@@ -40,7 +40,6 @@ fun HomeScreen(
     val trendingEvents by viewModel.trendingEvents.collectAsState()
     val nearbyEvents by viewModel.nearbyEvents.collectAsState()
     val allEvents by viewModel.allEvents.collectAsState()
-    val strings = LocalAppStrings.current
 
     LazyColumn(
         modifier = Modifier
@@ -81,7 +80,8 @@ fun HomeScreen(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                allEvents.forEach { event ->
+                if (allEvents.isNotEmpty()) {
+                    val event = allEvents.first()
                     DiscoverEventCard(event, onClick = { onEventClick(event.id) })
                 }
             }

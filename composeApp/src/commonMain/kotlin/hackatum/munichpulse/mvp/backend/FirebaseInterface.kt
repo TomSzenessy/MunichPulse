@@ -79,6 +79,11 @@ class FirebaseInterface {
         
     }
 
+    // Function should only ever be used after login!
+    fun getUserId(): String {
+        return Firebase.auth.currentUser!!.uid
+    }
+
     fun isSignedIn(): Boolean {
         return Firebase.auth.currentUser != null;
     }
@@ -329,10 +334,10 @@ class FirebaseInterface {
     }
 
     /**
-     * Add the userId to the specified group users list (stored as List<String> of UIDs).
+     * Add the user to the specified group users list (stored as List<String> of UIDs).
      * Creates the group document if it doesn't exist yet.
      */
-    suspend fun addUserIdToGroup(eventId: String, groupId: String, userId: String) {
+    suspend fun addUserToGroup(eventId: String, groupId: String, userId: String) {
         val db = Firebase.firestore
         val groupRef = db.collection(EVENT_COLLECTION)
             .document(eventId)
