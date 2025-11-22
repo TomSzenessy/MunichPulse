@@ -30,9 +30,12 @@ import hackatum.munichpulse.mvp.ui.theme.RedStatus
 import hackatum.munichpulse.mvp.ui.theme.YellowStatus
 import hackatum.munichpulse.mvp.viewmodel.HomeViewModel
 
+import androidx.compose.foundation.clickable
+
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel { HomeViewModel() }
+    viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel { HomeViewModel() },
+    onEventClick: (String) -> Unit
 ) {
     val trendingEvents by viewModel.trendingEvents.collectAsState()
     val nearbyEvents by viewModel.nearbyEvents.collectAsState()
@@ -55,7 +58,7 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(trendingEvents) { event ->
-                    TrendingEventCard(event)
+                    TrendingEventCard(event, onClick = { onEventClick(event.id) })
                 }
             }
         }
@@ -67,7 +70,7 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(nearbyEvents) { event ->
-                    NearbyEventCard(event)
+                    NearbyEventCard(event, onClick = { onEventClick(event.id) })
                 }
             }
         }
@@ -79,7 +82,7 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 allEvents.forEach { event ->
-                    DiscoverEventCard(event)
+                    DiscoverEventCard(event, onClick = { onEventClick(event.id) })
                 }
             }
         }
@@ -119,13 +122,14 @@ fun SectionHeader(title: String) {
 }
 
 @Composable
-fun TrendingEventCard(event: Event) {
+fun TrendingEventCard(event: Event, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .width(280.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface)
             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
     ) {
         Box(modifier = Modifier.height(160.dp)) {
             AsyncImage(
@@ -153,13 +157,14 @@ fun TrendingEventCard(event: Event) {
 }
 
 @Composable
-fun NearbyEventCard(event: Event) {
+fun NearbyEventCard(event: Event, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .width(160.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface)
             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
     ) {
         AsyncImage(
             model = event.imageUrl,
@@ -177,12 +182,14 @@ fun NearbyEventCard(event: Event) {
 }
 
 @Composable
-fun DiscoverEventCard(event: Event) {
+fun DiscoverEventCard(event: Event, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

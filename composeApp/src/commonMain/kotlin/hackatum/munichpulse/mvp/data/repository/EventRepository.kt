@@ -22,6 +22,11 @@ interface EventRepository {
      * Returns a flow of all available events.
      */
     fun getAllEvents(): Flow<List<Event>>
+    
+    /**
+     * Returns a flow of a specific event by its ID.
+     */
+    fun getEventById(eventId: String): Flow<Event?>
 }
 
 class MockEventRepository : EventRepository {
@@ -75,5 +80,7 @@ class MockEventRepository : EventRepository {
 
     override fun getTrendingEvents(): Flow<List<Event>> = flowOf(events.filter { it.isTrending })
     override fun getNearbyEvents(): Flow<List<Event>> = flowOf(events.take(3)) // Mock nearby logic
-    override fun getAllEvents(): Flow<List<Event>> = flowOf<List<Event>>(events)
+    override fun getAllEvents(): Flow<List<Event>> = flowOf(events)
+
+    override fun getEventById(eventId: String): Flow<Event?> = flowOf(events.find { it.id == eventId })
 }

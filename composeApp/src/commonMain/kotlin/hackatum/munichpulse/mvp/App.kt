@@ -1,36 +1,75 @@
 package hackatum.munichpulse.mvp
 
 import androidx.compose.runtime.*
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import hackatum.munichpulse.mvp.data.repository.GroupRepository
+import hackatum.munichpulse.mvp.ui.EventDetailScreen
 import hackatum.munichpulse.mvp.ui.LoginScreen
 import hackatum.munichpulse.mvp.ui.MainScreen
 import hackatum.munichpulse.mvp.ui.ProvideAppStrings
+import hackatum.munichpulse.mvp.ui.SplashScreen
+import hackatum.munichpulse.mvp.ui.navigation.Screen
 import hackatum.munichpulse.mvp.ui.theme.UrbanPulseTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import androidx.compose.runtime.getValue
 
 @Composable
 fun App() {
     LaunchedEffect(Unit) {
         // Initialize repositories
         GroupRepository.init()
-        // One-time check at app start: if already logged in, skip login screen
-        if (ViewController.getInstance().isLoggedIn()) {
-            ViewController.getInstance().closeSignInScreen()
-        }
     }
 
     ProvideAppStrings {
         UrbanPulseTheme {
-            val showLogin by ViewController.getInstance().showLogInScreen().collectAsState()
-
-            if (showLogin) {
-                LoginScreen(onLoginSuccess = { name, isLocal ->
-                    ViewController.getInstance().closeSignInScreen()
+            val navController = rememberNavController()
+            
+            NavHost(navController = navController, startDestination = Screen.Splash.route) {
+                composable(Screen.Splash.route) {
+                    SplashScreen(
+                        onSplashFinished = {
+                            if (ViewController.getInstance().isLoggedIn()) {
+                                navController.navigate(Screen.Main.route) {
+                                    popUpTo(Screen.Splash.route) { inclusive = true }
+                                }
+                            } else {
+                                navController.navigate(Screen.Login.route) {
+                                    popUpTo(Screen.Splash.route) { inclusive = true }
+                                }
+                            }
+                        }
+                    )
                 }
-                )
-            } else {
-                MainScreen()
+                
+                composable(Screen.Login.route) {
+                    LoginScreen(onLoginSuccess = { name, isLocal ->
+                        navController.navigate(Screen.Main.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    })
+                }
+                
+                composable(Screen.Main.route) {
+                    MainScreen(
+                        onEventClick = { eventId ->
+                            navController.navigate(Screen.EventDetail.createRoute(eventId))
+                        }
+                    )
+                }
+                
+                composable(
+                    route = Screen.EventDetail.route,
+                    arguments = listOf(navArgument("eventId") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val eventId = backStackEntry.arguments?.getString("eventId") ?: return@composable
+                    EventDetailScreen(
+                        eventId = eventId,
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
             }
         }
     }

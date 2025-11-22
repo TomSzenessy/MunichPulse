@@ -1,9 +1,8 @@
 package hackatum.munichpulse.mvp.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import hackatum.munichpulse.mvp.ViewController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -52,7 +51,7 @@ class LoginViewModel : ViewModel() {
      */
     fun login(name: String, isLocal: Boolean, onResult: (Boolean) -> Unit) {
         setLoading(true)
-        CoroutineScope(Dispatchers.Default).launch {
+        viewModelScope.launch {
             logIn(name, isLocal)
             onResult(true)
             ViewController.getInstance().closeSignInScreen()

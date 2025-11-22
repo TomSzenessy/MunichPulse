@@ -23,15 +23,10 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun UrbanPulseTheme(
+    useDarkTheme: Boolean = androidx.compose.foundation.isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val isDarkMode by SettingsRepository.isDarkMode.collectAsState(initial = true)
-    
-    // For now, we only have a Dark Color Scheme defined. 
-    // If Light Mode is requested, we should define a LightColorScheme.
-    // For this MVP step, I'll define a basic LightColorScheme fallback or just toggle colors.
-    
-    val colorScheme = if (isDarkMode) DarkColorScheme else LightColorScheme
+    val colorScheme = if (useDarkTheme) DarkColorScheme else LightColorScheme
 
     ProvideAppStrings {
         MaterialTheme(

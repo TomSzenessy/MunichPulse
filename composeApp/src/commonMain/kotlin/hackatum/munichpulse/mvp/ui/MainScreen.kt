@@ -35,7 +35,7 @@ enum class AppScreen(val label: String, val icon: ImageVector) {
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(onEventClick: (String) -> Unit) {
     var currentScreen by remember { mutableStateOf(AppScreen.Home) }
     val strings = LocalAppStrings.current
 
@@ -103,7 +103,7 @@ fun MainScreen() {
                         }
                     }
                 },
-                contentWindowInsets = WindowInsets(0, 0, 0, 0) // Handle insets manually if needed
+                contentWindowInsets = WindowInsets.safeDrawing
             ) { innerPadding ->
                 Box(
                     modifier = Modifier
@@ -111,7 +111,7 @@ fun MainScreen() {
                         .fillMaxSize()
                 ) {
                     when (currentScreen) {
-                        AppScreen.Home -> HomeScreen()
+                        AppScreen.Home -> HomeScreen(onEventClick = onEventClick)
                         AppScreen.Squads -> GroupScreen()
                         AppScreen.Map -> MapScreen()
                         AppScreen.Profile -> ProfileScreen()
