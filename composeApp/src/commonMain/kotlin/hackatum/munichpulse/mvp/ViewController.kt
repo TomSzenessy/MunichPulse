@@ -23,26 +23,26 @@ object ViewController {
     }
 
     fun isLoggedIn(): Boolean {
-        return FirebaseInterface.isSignedIn()
+        return FirebaseInterface.getInstance().isSignedIn()
     }
 
     fun logIn(name: String, isLocal: Boolean) {
         CoroutineScope(Dispatchers.Default).launch {
-            FirebaseInterface.userSignIn(name, isLocal)
+            FirebaseInterface.getInstance().userSignIn(name, isLocal)
         }
     }
 
     // Sign in directly with a Google ID token (e.g., on a fresh install or another device)
     fun signInWithGoogle(idToken: String, name: String? = null, isLocal: Boolean? = null) {
         CoroutineScope(Dispatchers.Default).launch {
-            FirebaseInterface.signInWithGoogle(idToken, name, isLocal)
+            FirebaseInterface.getInstance().signInWithGoogle(idToken, name, isLocal)
         }
     }
 
     // Link the currently signed-in (likely anonymous) account with Google to upgrade it
     fun linkWithGoogle(idToken: String, name: String? = null, isLocal: Boolean? = null) {
         CoroutineScope(Dispatchers.Default).launch {
-            FirebaseInterface.linkWithGoogle(idToken, name, isLocal)
+            FirebaseInterface.getInstance().linkWithGoogle(idToken, name, isLocal)
         }
     }
 }

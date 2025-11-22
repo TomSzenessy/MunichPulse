@@ -87,9 +87,9 @@ class LoginViewModel : ViewModel() {
         setLoading(true)
         viewModelScope.launch {
             try {
-                ViewController.getInstance().signInWithGoogle(idToken, name, isLocal)
+                ViewController.signInWithGoogle(idToken, name, isLocal)
                 onResult(true)
-                ViewController.getInstance().closeSignInScreen()
+                ViewController.closeSignInScreen()
             } catch (_: Throwable) {
                 onResult(false)
             } finally {

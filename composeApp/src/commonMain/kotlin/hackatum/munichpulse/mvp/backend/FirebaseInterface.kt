@@ -43,7 +43,7 @@ const val EVENT_IS_TRENDING_PARAM: String = "is_trending"
 
 class FirebaseInterface {
     companion object {
-        private var INSTANCE: FirebaseInterface = FirebaseInterface()
+        private var INSTANCE: FirebaseInterface? = FirebaseInterface()
         private var initialized: Boolean = false
 
         fun initializeForWeb() {
@@ -71,7 +71,7 @@ class FirebaseInterface {
                 }
                 initialized = true
             }
-            return INSTANCE
+            return INSTANCE!!
 
         }
         

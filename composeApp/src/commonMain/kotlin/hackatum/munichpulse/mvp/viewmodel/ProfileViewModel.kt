@@ -27,7 +27,7 @@ class ProfileViewModel : ViewModel() {
     init {
         // Load the currently signed-in user's data once on initialization
         viewModelScope.launch {
-            _user.value = FirebaseInterface.getCurrentUserData()
+            _user.value = FirebaseInterface.getInstance().getCurrentUserData()
         }
     }
 

@@ -1,10 +1,12 @@
 import hackatum.munichpulse.mvp.data.model.Event
 import kotlinx.serialization.json.Json
 import munichpulse.composeapp.generated.resources.Res
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class LoadEventMockData {
 
     companion object {
+        @OptIn(ExperimentalResourceApi::class)
         suspend fun loadEventsFromResources(filePath: String): List<Event> {
             try {
                 // Lädt die Datei aus den gemeinsamen Ressourcen
