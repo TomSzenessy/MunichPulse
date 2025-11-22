@@ -41,9 +41,12 @@ fun ProfileScreen(
             .padding(bottom = 80.dp)
     ) {
         item {
+            var avatarUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuDQts8JbmFxIyYdug0PKmZl5OdhBLP9hTKxz_uKAnvZpuac-30tETuTBqRdPE5DEPk5hGdiNUmR-lJ0TMYJd9x8vnY8MAnOUuRtk_Jxmnq_35gj4zrpxZBXXxQRWPEfbXQjl2HAwfxM3A7w_cffrbD-w42pStMjw3Xy16IVJblj48904FPZMfxkyduNsXQBWhVSAVdLq_SbrEQbfJZJCXmXbYCk6CZCMyZ6-vXnpoR1nrxlPFW3EaC_KF9HD_GeA6bx_ua7c20OJft0"
+            if (user?.avatarUrl != null && user?.avatarUrl?.isNotEmpty() == true)
+                avatarUrl = user?.avatarUrl!!
             ProfileHeader(
                 name = user?.name ?: "Loading...",
-                avatarUrl = user?.avatarUrl,
+                avatarUrl = avatarUrl,
                 isLocal = user?.isLocal == true
             )
         }
