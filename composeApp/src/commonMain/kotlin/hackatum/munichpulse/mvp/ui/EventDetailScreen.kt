@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +53,63 @@ fun EventDetailScreen(
                     navigationIconContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
+        },
+        bottomBar = {
+            // Join Event button fixed at the bottom
+            Surface(color = MaterialTheme.colorScheme.background) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(16.dp)
+                        .padding(bottom = 12.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    val openJoinDialog = remember { mutableStateOf(false) }
+
+                    // Expose the dialog when needed
+                    if (openJoinDialog.value) {
+                        AlertDialog(
+                            onDismissRequest = { openJoinDialog.value = false },
+                            title = { Text("Join Event") },
+                            text = {
+                                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                    Text(
+                                        "How would you like to join?",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                    // Emphasize joining a random group as the primary action
+                                    Button(
+                                        onClick = { openJoinDialog.value = false },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) { Text("Join Random Group of 5") }
+                                    // Solo join as secondary/outlined option
+                                    OutlinedButton(
+                                        onClick = { openJoinDialog.value = false },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) { Text("Join Solo") }
+                                }
+                            },
+                            confirmButton = {
+                                // No primary action here; options are in the content
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { openJoinDialog.value = false }) {
+                                    Text("Cancel")
+                                }
+                            }
+                        )
+                    }
+
+                    Button(
+                        onClick = { openJoinDialog.value = true },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Join Event")
+                    }
+                }
+            }
         }
     ) { paddingValues ->
         Box(

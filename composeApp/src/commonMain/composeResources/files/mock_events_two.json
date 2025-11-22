@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "title": "Winterball 2025",
+    "location": "MI Magistrale, Garching",
+    "imageUrl": "https://picsum.photos/seed/winterball/600/400",
+    "fullnessPercentage": 98,
+    "isTrending": true
+  },
+  {
+    "id": "2",
+    "title": "HackaTUM Afterparty",
+    "location": "TUM CIT, Garching",
+    "imageUrl": "https://picsum.photos/seed/hackatum/600/400",
+    "fullnessPercentage": 85,
+    "isTrending": true
+  },
+  {
+    "id": "3",
+    "title": "Isar Chill & Grill",
+    "location": "Flaucher, München",
+    "imageUrl": "https://picsum.photos/seed/isar/600/400",
+    "fullnessPercentage": 40,
+    "isTrending": false
+  },
+  {
+    "id": "4",
+    "title": "Tollwood Winterfestival",
+    "location": "Theresienwiese",
+    "imageUrl": "https://picsum.photos/seed/tollwood/600/400",
+    "fullnessPercentage": 75,
+    "isTrending": true
+  },
+  {
+    "id": "5",
+    "title": "Open AI Guest Lecture",
+    "location": "Audimax, Stammgelände",
+    "imageUrl": "https://picsum.photos/seed/lecture/600/400",
+    "fullnessPercentage": 100,
+    "isTrending": false
+  }
+]

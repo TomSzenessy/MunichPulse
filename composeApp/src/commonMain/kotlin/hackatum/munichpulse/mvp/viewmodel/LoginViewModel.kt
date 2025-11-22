@@ -68,6 +68,35 @@ class LoginViewModel : ViewModel() {
             setLoading(false)
         }
     }
+
+    /**
+     * Signs in with Google using an ID token obtained from the platform.
+     * This will authenticate the user against Firebase and upsert the user document.
+     *
+     * @param idToken Google ID token returned by the platform login flow.
+     * @param name Optional name to store/update in Firestore (if provided).
+     * @param isLocal Optional isLocal flag to store/update in Firestore (if provided).
+     * @param onResult Callback invoked after the operation completes with success status.
+     */
+    fun signInWithGoogle(
+        idToken: String,
+        name: String? = null,
+        isLocal: Boolean? = null,
+        onResult: (Boolean) -> Unit
+    ) {
+        setLoading(true)
+        viewModelScope.launch {
+            try {
+                ViewController.getInstance().signInWithGoogle(idToken, name, isLocal)
+                onResult(true)
+                ViewController.getInstance().closeSignInScreen()
+            } catch (_: Throwable) {
+                onResult(false)
+            } finally {
+                setLoading(false)
+            }
+        }
+    }
 }
 
 fun logIn(name: String, isLocal: Boolean) {
