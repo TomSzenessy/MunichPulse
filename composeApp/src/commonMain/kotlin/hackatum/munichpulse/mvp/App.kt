@@ -1,7 +1,6 @@
 package hackatum.munichpulse.mvp
 
 import androidx.compose.runtime.*
-import hackatum.munichpulse.mvp.ui.LoginScreen
 import hackatum.munichpulse.mvp.ui.MainScreen
 import hackatum.munichpulse.mvp.ui.UrbanPulseTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -15,7 +14,12 @@ fun App() {
         if (isLoggedIn) {
             MainScreen()
         } else {
-            LoginScreen(onLoginSuccess = { isLoggedIn = true })
+            hackatum.munichpulse.mvp.ui.LoginScreen(
+                onLoginSuccess = { name, isLocal -> 
+                    // TODO: Save user session (name, isLocal)
+                    isLoggedIn = true 
+                }
+            )
         }
     }
 }

@@ -1,107 +1,160 @@
 package hackatum.munichpulse.mvp.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun LoginScreen(onLoginSuccess: (String, Boolean) -> Unit) {
+    var name by remember { mutableStateOf("") }
+    var isLocal by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(DarkBackground)
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            "UrbanPulse",
-            color = PrimaryGreen,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 48.dp)
+    Box(modifier = Modifier.fillMaxSize().background(DarkBackground)) {
+        // Background Image with Overlay
+        AsyncImage(
+            model = "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2070&auto=format&fit=crop", // Music/Event background
+            contentDescription = "Background",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize().alpha(0.3f)
+        )
+        
+        // Gradient Overlay
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            DarkBackground.copy(alpha = 0.7f),
+                            DarkBackground
+                        )
+                    )
+                )
         )
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = PrimaryGreen,
-                unfocusedBorderColor = DarkBorder,
-                focusedLabelColor = PrimaryGreen,
-                unfocusedLabelColor = TextSecondary,
-                cursorColor = PrimaryGreen,
-                focusedTextColor = TextPrimary,
-                unfocusedTextColor = TextPrimary
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = PrimaryGreen,
-                unfocusedBorderColor = DarkBorder,
-                focusedLabelColor = PrimaryGreen,
-                unfocusedLabelColor = TextSecondary,
-                cursorColor = PrimaryGreen,
-                focusedTextColor = TextPrimary,
-                unfocusedTextColor = TextPrimary
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                isLoading = true
-                // TODO: Implement Firebase Login
-                // Mock success for now
-                onLoginSuccess()
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = PrimaryGreen,
-                contentColor = DarkBackground
-            ),
-            modifier = Modifier.fillMaxWidth().height(50.dp),
-            shape = RoundedCornerShape(12.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(color = DarkBackground, modifier = Modifier.size(24.dp))
-            } else {
-                Text("Login", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            // Logo or Title
+            Text(
+                text = "MunichPulse",
+                style = MaterialTheme.typography.displayMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = PrimaryGreen
+                )
+            )
+            
+            Text(
+                text = "Find your beat in the city.",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = TextSecondary
+                ),
+                modifier = Modifier.padding(top = 8.dp, bottom = 48.dp)
+            )
+
+            // Name Field
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("What should we call you?") },
+                leadingIcon = { Icon(Icons.Default.Person, contentDescription = "Name", tint = PrimaryGreen) },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = PrimaryGreen,
+                    unfocusedBorderColor = DarkBorder,
+                    focusedLabelColor = PrimaryGreen,
+                    unfocusedLabelColor = TextSecondary,
+                    cursorColor = PrimaryGreen,
+                    focusedTextColor = TextPrimary,
+                    unfocusedTextColor = TextPrimary
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Local Toggle
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(DarkSurface, RoundedCornerShape(12.dp))
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        text = "I am a Local",
+                        style = MaterialTheme.typography.titleMedium.copy(color = TextPrimary, fontWeight = FontWeight.Bold)
+                    )
+                    Text(
+                        text = "I know my way around Munich",
+                        style = MaterialTheme.typography.bodySmall.copy(color = TextSecondary)
+                    )
+                }
+                Switch(
+                    checked = isLocal,
+                    onCheckedChange = { isLocal = it },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = DarkBackground,
+                        checkedTrackColor = PrimaryGreen,
+                        uncheckedThumbColor = TextSecondary,
+                        uncheckedTrackColor = DarkBorder
+                    )
+                )
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-        TextButton(onClick = onLoginSuccess) {
-            Text("Continue as Guest", color = TextSecondary)
+            // Login Button
+            Button(
+                onClick = { 
+                    if (name.isNotBlank()) {
+                        isLoading = true
+                        // Simulate network delay
+                        onLoginSuccess(name, isLocal) 
+                    }
+                },
+                enabled = name.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = PrimaryGreen,
+                    contentColor = DarkBackground,
+                    disabledContainerColor = DarkSurface,
+                    disabledContentColor = TextSecondary
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(color = DarkBackground, modifier = Modifier.size(24.dp))
+                } else {
+                    Text(
+                        text = "Start Exploring",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
+            }
         }
     }
 }

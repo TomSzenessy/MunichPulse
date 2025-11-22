@@ -10,6 +10,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -41,6 +43,11 @@ fun ProfileScreen() {
         item {
             ProfileHeader(user?.name ?: "Loading...", user?.avatarUrl)
         }
+        
+        item {
+            SettingsSection()
+        }
+
         item {
             Text(
                 "Logbook",
@@ -52,6 +59,68 @@ fun ProfileScreen() {
         }
         items(logbookEntries) { entry ->
             LogbookItem(entry)
+        }
+    }
+}
+
+@Composable
+fun SettingsSection() {
+    val isDarkMode by hackatum.munichpulse.mvp.domain.SettingsRepository.isDarkMode.collectAsState(initial = true)
+    val language by hackatum.munichpulse.mvp.domain.SettingsRepository.language.collectAsState(initial = "English")
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            "Settings",
+            color = TextPrimary,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        // Dark Mode Switch
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Dark Mode", color = TextPrimary, fontSize = 16.sp)
+            Switch(
+                checked = isDarkMode,
+                onCheckedChange = { hackatum.munichpulse.mvp.domain.SettingsRepository.setDarkMode(it) },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = DarkBackground,
+                    checkedTrackColor = PrimaryGreen,
+                    uncheckedThumbColor = TextSecondary,
+                    uncheckedTrackColor = DarkBorder
+                )
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Language Selection (Simple Toggle for MVP)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Language", color = TextPrimary, fontSize = 16.sp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(language, color = TextSecondary, fontSize = 14.sp, modifier = Modifier.padding(end = 8.dp))
+                // Simple toggle for demo purposes
+                Switch(
+                    checked = language == "German",
+                    onCheckedChange = { 
+                        hackatum.munichpulse.mvp.domain.SettingsRepository.setLanguage(if (it) "German" else "English") 
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = DarkBackground,
+                        checkedTrackColor = PrimaryGreen,
+                        uncheckedThumbColor = TextSecondary,
+                        uncheckedTrackColor = DarkBorder
+                    )
+                )
+            }
         }
     }
 }
