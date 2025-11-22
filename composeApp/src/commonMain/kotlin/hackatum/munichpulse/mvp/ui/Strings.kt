@@ -30,8 +30,7 @@ data class AppStrings(
     val searchPlaceholder: String,
     val trendingHeader: String,
     val nearbyHeader: String,
-    val discoverHeader: String,
-    val languageButton: String
+    val discoverHeader: String
 )
 
 val EnStrings = AppStrings(
@@ -56,8 +55,7 @@ val EnStrings = AppStrings(
     searchPlaceholder = "Search for events or places",
     trendingHeader = "Trending Now",
     nearbyHeader = "Near You",
-    discoverHeader = "Discover New Events",
-    languageButton = "EN"
+    discoverHeader = "Discover New Events"
 )
 
 val DeStrings = AppStrings(
@@ -82,8 +80,7 @@ val DeStrings = AppStrings(
     searchPlaceholder = "Suche nach Events oder Orten",
     trendingHeader = "Jetzt angesagt",
     nearbyHeader = "In deiner Nähe",
-    discoverHeader = "Neue Events entdecken",
-    languageButton = "DE"
+    discoverHeader = "Neue Events entdecken"
 )
 
 val LocalAppStrings = staticCompositionLocalOf { EnStrings }

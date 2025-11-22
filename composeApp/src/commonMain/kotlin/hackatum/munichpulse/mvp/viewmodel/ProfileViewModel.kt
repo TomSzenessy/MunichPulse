@@ -2,35 +2,35 @@ package hackatum.munichpulse.mvp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import hackatum.munichpulse.mvp.backend.FirebaseInterface
+import hackatum.munichpulse.mvp.data.model.LogbookEntry
 import hackatum.munichpulse.mvp.data.model.User
+import hackatum.munichpulse.mvp.data.repository.MockUserRepository
 import hackatum.munichpulse.mvp.data.repository.SettingsRepository
-import kotlinx.coroutines.flow.MutableStateFlow
+import hackatum.munichpulse.mvp.data.repository.UserRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 /**
  * ViewModel for the Profile screen.
  * Manages user data, logbook entries, and application settings.
- * Fetches actual user data from Firebase and exposes settings.
+ * @property userRepository The repository to fetch user data from.
  */
-class ProfileViewModel : ViewModel() {
+class ProfileViewModel(
+    private val userRepository: UserRepository = MockUserRepository()
+) : ViewModel() {
 
     /**
      * A flow of the current user.
      */
-    private val _user = MutableStateFlow<User?>(null)
-    val user: StateFlow<User?> = _user.asStateFlow()
+    val user: StateFlow<User?> = userRepository.getCurrentUser()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
-    init {
-        // Load the currently signed-in user's data from Firebase once
-        viewModelScope.launch {
-            _user.value = FirebaseInterface.getInstance().getCurrentUserData()
-        }
-    }
+    /**
+     * A flow of logbook entries for the user.
+     */
+    val logbookEntries: StateFlow<List<LogbookEntry>> = userRepository.getLogbookEntries()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     /**
      * A flow indicating whether dark mode is enabled.

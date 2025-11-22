@@ -1,6 +1,7 @@
 package hackatum.munichpulse.mvp
 
 import androidx.compose.runtime.*
+import hackatum.munichpulse.mvp.data.db.MunichPulseDatabase
 import hackatum.munichpulse.mvp.data.repository.GroupRepository
 import hackatum.munichpulse.mvp.ui.LoginScreen
 import hackatum.munichpulse.mvp.ui.MainScreen
@@ -10,10 +11,10 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.getValue
 
 @Composable
-fun App() {
+fun App(database: MunichPulseDatabase) {
     LaunchedEffect(Unit) {
         // Initialize repositories
-        GroupRepository.init()
+        GroupRepository.init(database)
         // One-time check at app start: if already logged in, skip login screen
         if (ViewController.getInstance().isLoggedIn()) {
             ViewController.getInstance().closeSignInScreen()
@@ -26,7 +27,6 @@ fun App() {
 
             if (showLogin) {
                 LoginScreen(onLoginSuccess = { name, isLocal ->
-
                     ViewController.getInstance().closeSignInScreen()
                 }
                 )

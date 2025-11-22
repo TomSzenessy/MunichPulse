@@ -1,5 +1,6 @@
 package hackatum.munichpulse.mvp.data.repository
 
+import hackatum.munichpulse.mvp.data.db.MunichPulseDatabase
 import hackatum.munichpulse.mvp.data.model.ChatMessage
 import hackatum.munichpulse.mvp.data.model.Group
 import hackatum.munichpulse.mvp.data.model.User
@@ -13,6 +14,7 @@ import hackatum.munichpulse.mvp.currentTimeMillis
  * Handles fetching groups, joining events, and sending messages.
  */
 object GroupRepository {
+    private lateinit var db: MunichPulseDatabase
     private val _groups = MutableStateFlow<List<Group>>(emptyList())
     /**
      * A flow of groups the user belongs to.
@@ -20,79 +22,58 @@ object GroupRepository {
     val groups = _groups.asStateFlow()
 
     /**
-     * Initializes the repository.
+     * Initializes the repository with the database.
+     * @param database The database instance.
      */
-    fun init() {
+    fun init(database: MunichPulseDatabase) {
+        db = database
         refreshGroups()
     }
 
     private fun refreshGroups() {
-        // Mock data
-        val mockGroups = listOf(
-            Group(
-                id = "1",
-                eventId = "event1",
-                members = listOf(
-                    User("u1", "Alice", "", true),
-                    User("u2", "Bob", "", false)
-                ),
-                chatMessages = listOf(
-                    ChatMessage("m1", "u1", "Hey everyone!", currentTimeMillis() - 10000),
-                    ChatMessage("m2", "u2", "Hello!", currentTimeMillis() - 5000)
-                )
-            ),
-            Group(
-                id = "2",
-                eventId = "event2",
-                members = listOf(
-                    User("u3", "Charlie", "", true),
-                    User("u4", "Dave", "", false)
-                ),
-                chatMessages = listOf(
-                    ChatMessage("m3", "u3", "Anyone going to the concert?", currentTimeMillis() - 20000)
-                )
-            )
-        )
-        _groups.value = mockGroups
+        if (!::db.isInitialized) return
+
+        val localGroups = db.schemaQueries.selectAllGroups().executeAsList()
+        val allGroups = localGroups.map { localGroup ->
+            val members = db.schemaQueries.selectGroupMembers(localGroup.id).executeAsList().map {
+                User(it.id, it.name, it.avatarUrl ?: "", it.isLocal)
+            }
+            val messages = db.schemaQueries.selectGroupMessages(localGroup.id).executeAsList().map {
+                ChatMessage(it.id, it.senderId, it.text, it.timestamp)
+            }
+            Group(localGroup.id, localGroup.eventId, members, messages)
+        }
+        _groups.value = allGroups
     }
 
     fun getMyGroups() = groups
 
     fun joinEvent(eventId: String, user: User) {
-        // Mock implementation: Add user to a group for this event
-        val currentGroups = _groups.value.toMutableList()
-        val existingGroupIndex = currentGroups.indexOfFirst { it.eventId == eventId }
+        if (!::db.isInitialized) return
 
-        if (existingGroupIndex != -1) {
-            val group = currentGroups[existingGroupIndex]
-            val updatedMembers = group.members + user
-            currentGroups[existingGroupIndex] = group.copy(members = updatedMembers)
+        // Simple logic: Check if we are already in a group for this event
+        val currentGroups = _groups.value
+        val existingGroup = currentGroups.find { it.eventId == eventId }
+
+        if (existingGroup != null) {
+            // Add user to existing group in DB
+            db.schemaQueries.insertUser(user.id, user.name, user.avatarUrl, user.isLocal)
+            db.schemaQueries.insertGroupMember(existingGroup.id, user.id)
         } else {
-            val newGroup = Group(
-                id = (currentGroups.size + 1).toString(),
-                eventId = eventId,
-                members = listOf(user)
-            )
-            currentGroups.add(newGroup)
+            // Create new group
+            val newGroupId = (currentGroups.size + 1).toString() // Simple ID
+            db.schemaQueries.insertGroup(newGroupId, eventId)
+            db.schemaQueries.insertUser(user.id, user.name, user.avatarUrl, user.isLocal)
+            db.schemaQueries.insertGroupMember(newGroupId, user.id)
         }
-        _groups.value = currentGroups
+        refreshGroups()
     }
 
     fun sendMessage(groupId: String, text: String, user: User) {
-        val currentGroups = _groups.value.toMutableList()
-        val groupIndex = currentGroups.indexOfFirst { it.id == groupId }
+        if (!::db.isInitialized) return
 
-        if (groupIndex != -1) {
-            val group = currentGroups[groupIndex]
-            val newMessage = ChatMessage(
-                id = currentTimeMillis().toString(),
-                senderId = user.id,
-                text = text,
-                timestamp = currentTimeMillis()
-            )
-            val updatedMessages = group.chatMessages + newMessage
-            currentGroups[groupIndex] = group.copy(chatMessages = updatedMessages)
-            _groups.value = currentGroups
-        }
+        val newMessageId = currentTimeMillis().toString()
+        db.schemaQueries.insertMessage(newMessageId, groupId, user.id, text, currentTimeMillis())
+        refreshGroups()
     }
 }

@@ -6,8 +6,17 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.sqldelight)
 
     id("com.google.gms.google-services")
+}
+
+sqldelight {
+    databases {
+        create("MunichPulseDatabase") {
+            packageName.set("hackatum.munichpulse.mvp.data.db")
+        }
+    }
 }
 
 kotlin {
@@ -32,6 +41,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.sqldelight.android)
 
             // Use explicit versions for Firebase Android SDKs within KMP androidMain to avoid BOM issues
             implementation("com.google.firebase:firebase-auth-ktx:23.2.1")
@@ -55,6 +65,8 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.multiplatform.settings)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.sqldelight.coroutines)
+            implementation(libs.sqldelight.primitive.adapters)
 
             implementation(libs.firebase.firestore) // example
             implementation(libs.firebase.auth)
@@ -64,13 +76,12 @@ kotlin {
             implementation(libs.kotlin.test)
         }
         jsMain.dependencies {
-            implementation(libs.ktor.client.js)
-            implementation(npm("firebase", "10.7.1")) // Firebase JS SDK
+            implementation(npm("firebase", "11.0.0")) // Firebase JS SDK
+            implementation(libs.sqldelight.web)
+            implementation(npm("sql.js", "1.8.0"))
             implementation(devNpm("copy-webpack-plugin", "9.1.0"))
             implementation(devNpm("webpack", "5.88.2"))
             implementation(devNpm("webpack-cli", "5.1.4"))
-            implementation(devNpm("os-browserify", "0.3.0"))
-            implementation(devNpm("path-browserify", "1.0.1"))
         }
     }
 }

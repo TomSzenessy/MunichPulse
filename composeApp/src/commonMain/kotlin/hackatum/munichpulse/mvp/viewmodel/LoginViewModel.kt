@@ -21,14 +21,6 @@ class LoginViewModel : ViewModel() {
     val uiState = _uiState.asStateFlow()
 
     /**
-     * Updates the user's name.
-     * @param name The new name.
-     */
-    fun updateName(name: String) {
-        _uiState.update { it.copy(name = name) }
-    }
-
-    /**
      * Toggles the user type between Local and Newby.
      * @param isLocal True if the user is a local, false otherwise.
      */
@@ -66,7 +58,6 @@ fun logIn(name: String, isLocal: Boolean) {
 }
 
 data class LoginUiState(
-    val name: String = "",
     val isLocal: Boolean = false,
     val isLoading: Boolean = false
 )
