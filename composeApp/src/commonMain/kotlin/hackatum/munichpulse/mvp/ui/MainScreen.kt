@@ -60,7 +60,7 @@ fun MainScreen(onEventClick: (String) -> Unit) {
                     }
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
-                    AppScreen.values().forEach { screen ->
+                    AppScreen.entries.forEach { screen ->
                         NavigationRailItem(
                             icon = { Icon(screen.icon, contentDescription = screen.getLabel(strings)) },
                             label = { Text(screen.getLabel(strings)) },
@@ -88,7 +88,7 @@ fun MainScreen(onEventClick: (String) -> Unit) {
                             containerColor = MaterialTheme.colorScheme.surface,
                             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                         ) {
-                            AppScreen.values().forEach { screen ->
+                            AppScreen.entries.forEach { screen ->
                                 NavigationBarItem(
                                     icon = { Icon(screen.icon, contentDescription = screen.getLabel(strings)) },
                                     label = { Text(screen.getLabel(strings)) },
@@ -116,7 +116,7 @@ fun MainScreen(onEventClick: (String) -> Unit) {
                     when (currentScreen) {
                         AppScreen.Home -> HomeScreen(onEventClick = onEventClick)
                         AppScreen.Squads -> GroupScreen()
-                        AppScreen.Map -> MapScreen()
+                        AppScreen.Map -> GroupScreen() //MapScreen()
                         AppScreen.Profile -> ProfileScreen()
                     }
                 }
