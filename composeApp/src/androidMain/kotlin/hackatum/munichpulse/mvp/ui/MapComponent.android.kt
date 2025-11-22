@@ -15,6 +15,7 @@ import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.extension.compose.annotation.generated.PointAnnotation
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
+import hackatum.munichpulse.mvp.BuildConfig
 import hackatum.munichpulse.mvp.model.Location
 import hackatum.munichpulse.mvp.viewmodel.MapEvent
 
@@ -65,7 +66,7 @@ actual fun MapComponent(
 
     MapboxMap(
         modifier = modifier,
-        mapViewportState = viewportState,
+        mapViewportState = viewportState
     ) {
         MapEffect(Unit) { mapView ->
             mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS)

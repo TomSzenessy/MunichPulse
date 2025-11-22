@@ -44,7 +44,7 @@ fun MainScreen(onEventClick: (String) -> Unit) {
     )) {
         val isWideScreen = maxWidth > 800.dp
 
-        Row(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.fillMaxSize().background(Color.Transparent)) {
             if (isWideScreen) {
                 NavigationRail(
                     containerColor = MaterialTheme.colorScheme.surface,
