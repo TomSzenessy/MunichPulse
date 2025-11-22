@@ -224,9 +224,10 @@ fun LoginScreen(
 
                     // 3. Sign in with Google
                     Button(
-                        onClick = { 
-                            viewModel.login("Google User", uiState.isLocal) { success ->
-                                if (success) onLoginSuccess("Google User", uiState.isLocal)
+                        onClick = {
+                            // TODO PERFORM GOOGLE LOGIN!!!
+                            viewModel.login(uiState.name, uiState.isLocal) { success ->
+                                if (success) onLoginSuccess(uiState.name, uiState.isLocal)
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -265,8 +266,8 @@ fun LoginScreen(
                     // 5. Continue as Guest
                     OutlinedButton(
                         onClick = { 
-                            viewModel.login("Guest", false) { success ->
-                                if (success) onLoginSuccess("Guest", false)
+                            viewModel.login(uiState.name, uiState.isLocal) { success ->
+                                if (success) onLoginSuccess(uiState.name, uiState.isLocal)
                             }
                         },
                         colors = ButtonDefaults.outlinedButtonColors(

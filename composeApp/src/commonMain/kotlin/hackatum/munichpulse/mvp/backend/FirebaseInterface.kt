@@ -146,4 +146,8 @@ class FirebaseInterface {
             isLocal = finalIsLocal
         )
     }
+
+    fun joinEvent(eventId: String) {
+
+    }
 }

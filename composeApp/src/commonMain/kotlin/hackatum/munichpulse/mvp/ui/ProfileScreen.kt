@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import hackatum.munichpulse.mvp.ui.theme.PrimaryGreen
-
 import hackatum.munichpulse.mvp.viewmodel.ProfileViewModel
+
 
 @Composable
 fun ProfileScreen(
@@ -151,9 +151,8 @@ fun ProfileHeader(name: String, avatarUrl: String?, isLocal: Boolean) {
                 modifier = Modifier.size(128.dp).clip(CircleShape)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Callsign: $name", color = MaterialTheme.colorScheme.onBackground, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-            Text(if (isLocal) "Local" else "Online", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
-            Text("Joined 2022", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
+            Text("Name: $name", color = MaterialTheme.colorScheme.onBackground, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text(if (isLocal) "Local" else "Newbie", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
         }
     }
 }
