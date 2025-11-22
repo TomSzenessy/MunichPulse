@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400" rel="stylesheet"/>
+<title>UrbanPulse Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+        @keyframes glow {
+            0% { box-shadow: 0 0 0px #46f20d, 0 0 0px #46f20d; }
+            50% { box-shadow: 0 0 20px #46f20d, 0 0 30px #46f20d; }
+            100% { box-shadow: 0 0 0px #46f20d, 0 0 0px #46f20d; }
+        }
+        .animate-glow {
+            animation: glow 1.5s ease-in-out;
+        }
+        .peer:checked ~ .animate-glow-target {
+            animation: glow 1.5s ease-in-out;
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[#101010]">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-[#101010] dark overflow-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
+<div class="flex flex-col flex-grow p-6 transition-transform duration-500 ease-in-out" id="onboarding-part-1">
+<header class="text-center pt-8 pb-10">
+<h1 class="text-3xl font-bold text-white tracking-tight">UrbanPulse</h1>
+</header>
+<main class="flex-grow flex flex-col justify-start space-y-8">
+<div class="space-y-2">
+<label class="text-sm font-medium text-gray-400 px-1" for="name">What should we call you?</label>
+<input class="form-input flex w-full resize-none rounded-xl border border-gray-700 bg-gray-900/50 p-4 text-base font-normal text-white placeholder:text-gray-500 focus:border-[#46f20d] focus:ring-2 focus:ring-[#46f20d]/50" id="name" placeholder="Enter your name" type="text"/>
+</div>
+<div class="space-y-4 text-center">
+<label class="text-sm font-medium text-gray-400 px-1">Choose your avatar (optional)</label>
+<div class="flex items-center justify-center space-x-4">
+<div class="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center cursor-pointer border-2 border-transparent hover:border-[#46f20d]">
+<span class="material-symbols-outlined text-gray-400 text-4xl">add_photo_alternate</span>
+</div>
+<div class="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center cursor-pointer border-2 border-transparent hover:border-[#46f20d]">
+<span class="text-3xl">🤖</span>
+</div>
+<div class="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center cursor-pointer border-2 border-transparent hover:border-[#46f20d]">
+<span class="text-3xl">👾</span>
+</div>
+</div>
+<button class="text-sm text-gray-500 hover:text-white">Skip for now</button>
+</div>
+<div class="space-y-4 pt-4">
+<button class="flex h-14 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-white text-base font-bold text-black">
+<svg class="mr-3 h-6 w-6" viewBox="0 0 48 48"><path d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" fill="#FFC107"></path><path d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" fill="#FF3D00"></path><path d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" fill="#4CAF50"></path><path d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C41.38,36.151,44,30.601,44,24C44,22.659,43.862,21.35,43.611,20.083z" fill="#1976D2"></path></svg>
+                Sign in with Google
+            </button>
+<button class="flex h-14 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-gray-800 text-base font-bold text-white">
+<svg class="mr-3 h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm16.5 2.25L12 10.5 4.5 5.25v.998L12 12l7.5-5.752V5.25z"></path></svg>
+                Sign in with Email
+            </button>
+</div>
+</main>
+<footer class="pt-10 pb-4">
+<button class="flex h-14 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-[#46f20d] text-base font-bold text-black" id="continue-btn-1">
+            Continue
+        </button>
+</footer>
+</div>
+<div class="absolute inset-0 flex translate-x-full flex-col bg-[#101010] p-6 transition-transform duration-500 ease-in-out" id="onboarding-part-2">
+<header class="text-center pt-8 pb-8">
+<h2 class="text-3xl font-bold text-white tracking-tight">Your Status</h2>
+<p class="mt-4 text-base text-gray-400">Let us know if you're a local or just visiting.</p>
+</header>
+<main class="flex-grow flex flex-col justify-start space-y-12">
+<div class="space-y-2">
+<label class="text-sm font-medium text-gray-400 px-1">I am a...</label>
+<div class="relative flex h-14 w-full items-center justify-center rounded-xl bg-gray-900/50 p-1 border border-gray-700">
+<div class="absolute h-12 w-1/2 rounded-lg bg-[#46f20d] transition-transform duration-300 ease-in-out peer-checked:translate-x-full animate-glow-target"></div>
+<label class="relative z-10 flex h-full flex-1 cursor-pointer items-center justify-center rounded-lg text-sm font-bold text-[#101010] transition-colors peer-checked:text-white">
+<span>Newby</span>
+<input checked="" class="peer appearance-none" name="homebase" type="radio" value="Newby"/>
+</label>
+<label class="relative z-10 flex h-full flex-1 cursor-pointer items-center justify-center rounded-lg text-sm font-bold text-white transition-colors peer-checked:text-[#101010]">
+<span>Munich Local</span>
+<input class="peer appearance-none" name="homebase" type="radio" value="Munich Local"/>
+</label>
+</div>
+</div>
+<div class="space-y-4 text-center">
+<h3 class="text-xl font-bold text-white">Exchange Protocol</h3>
+<p class="text-base text-gray-400">Share anonymous data to see live crowd maps. Your privacy is protected.</p>
+<div class="relative w-full max-w-xs aspect-[4/5] mx-auto rounded-2xl overflow-hidden border-2 border-gray-800">
+<div class="absolute inset-x-0 top-0 h-1/2">
+<img alt="Blurred map view" class="h-full w-full object-cover blur-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzQG6tFmaDgjjuQlkMQCn0CoonsU__V3boPZ7nv5FaR1BTIJ5lpvf5MWCW7Hws0ybG2vv1bn-owAT73BbxAGnYOQK6WAr64S5ui7WTtBnz5KLcET4uMdt3kFFJAMLbvAOO70aa6uBHlN3UV6fP20iQ12NE_M1ZGTy6Af3D5Q2i0DAtZtHOC6JpWjqa3rXUVBigG1JPZl-BZmMWdb2e2NkqU75_opqLasqlEY9tfDtYrYNm5S5wvcrDRyO4XU7GJ5TNUA5EEU9OBLuV"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+<span class="font-bold text-white text-lg tracking-widest opacity-80">OFFLINE</span>
+</div>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-1/2">
+<img alt="Live heatmap view" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUXWAAsPhrlhNNnS3wf5rFogi5UmEpNE8-tzX6e0OnKSL7o7qJ9iePDu1_oSh7C6ofJZgpjz7isZ0YHy2RLvMHY8OjcOnMrw-NlsqAcgoaktbSk3a4RAYUwflC_7Q6X0NZ9aimHv_qbKvAT_ZT5WTUp2M2H5jaE1VbscxPkFXVth8_rS57dwh61SMCYnGAibyq1XVhRV9iwucDmwahyvIwwTgm0V4mMPq46RV15dpxkPdxfDr53MYQsjaBrjvfCGoQuZ8xQ9zTQgca"/>
+<div class="absolute inset-0 bg-black/20 flex items-center justify-center">
+<span class="font-bold text-[#46f20d] text-lg tracking-widest">LIVE</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="pt-8 pb-4 space-y-3">
+<button class="flex h-14 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-[#46f20d] text-base font-bold text-black">
+            Activate Live Mode
+        </button>
+<button class="flex h-14 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-transparent text-base font-bold text-gray-400" id="stay-offline-btn">
+            Maybe Later
+        </button>
+</footer>
+</div>
+</div>
+<script>
+    const continueBtn1 = document.getElementById('continue-btn-1');
+    const onboardingPart1 = document.getElementById('onboarding-part-1');
+    const onboardingPart2 = document.getElementById('onboarding-part-2');
+    const localRadio = document.querySelector('input[value="Munich Local"]');
+    const glowTarget = document.querySelector('.animate-glow-target');
+    continueBtn1.addEventListener('click', () => {
+        onboardingPart1.classList.add('-translate-x-full');
+        onboardingPart2.classList.remove('translate-x-full');
+    });
+    // Logic for the 'Maybe Later' button could be added here to go back or finish onboarding
+    // For now, it does nothing as per the original script's single-direction flow.
+    localRadio.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            glowTarget.classList.remove('animate-glow');
+            void glowTarget.offsetWidth; // Trigger reflow
+            glowTarget.classList.add('animate-glow');
+        }
+    });
+</script>
+
+</body></html>
