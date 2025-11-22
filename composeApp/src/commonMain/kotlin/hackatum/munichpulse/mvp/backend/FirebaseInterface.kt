@@ -18,9 +18,12 @@ const val EMULATOR_IP: String = "131.159.207.110"
 
 const val EVENT_COLLECTION: String = "events"
 const val EVENT_NAME_PARAM: String = "name"
+const val EVENT_LOCATION_PARAM: String = "location"
 const val EVENT_DATA_BEGIN_PARAM: String = "begin_date"
+const val EVENT_GROUPS_SUB_COLLECTION: String = "groups"
+const val EVENT_GROUPS_USERS_LIST: String = "users"
 const val EVENT_TRACKS_SUB_COLLECTION: String = "tracks"
-const val EVENT_TRACK_SUB_COLLECTION_POSITION: String = "gps_coords"
+const val EVENT_TRACK_POSITION_PARAM: String = "gps_coords"
 
 
 
@@ -147,7 +150,34 @@ class FirebaseInterface {
         )
     }
 
-    fun joinEvent(eventId: String) {
 
+    /**
+     * Store a list of users for a specific group inside an event.
+     *
+     * Path structure (following const vals):
+     * events/{eventId}/groups/{groupId} with field "users" as a list of user maps
+     * using keys [USER_UID_PARAM], [USER_NAME_PARAM], [USER_IS_LOCAL_PARAM].
+     */
+    suspend fun addUsersToGroup(eventId: String, groupId: String, users: List<User>) {
+        val db = Firebase.firestore
+        val userList = users.map { user ->
+            mapOf(
+                USER_UID_PARAM to user.id,
+                USER_NAME_PARAM to user.name,
+                USER_IS_LOCAL_PARAM to user.isLocal
+            )
+        }
+
+        db.collection(EVENT_COLLECTION)
+            .document(eventId)
+            .collection(EVENT_GROUPS_SUB_COLLECTION)
+            .document(groupId)
+            // Merge so other fields on the group doc are preserved
+            .set(mapOf(EVENT_GROUPS_USERS_LIST to userList), merge = true)
+    }
+
+    /** Convenience function to add a single user to a group. */
+    suspend fun addUserToGroup(eventId: String, groupId: String, user: User) {
+        addUsersToGroup(eventId, groupId, listOf(user))
     }
 }
