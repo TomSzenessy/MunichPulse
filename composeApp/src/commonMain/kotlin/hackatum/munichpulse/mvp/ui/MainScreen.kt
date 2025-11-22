@@ -116,7 +116,7 @@ fun MainScreen(onEventClick: (String) -> Unit) {
                     when (currentScreen) {
                         AppScreen.Home -> HomeScreen(onEventClick = onEventClick)
                         AppScreen.Squads -> GroupScreen()
-                        AppScreen.Map -> GroupScreen() //MapScreen()
+                        AppScreen.Map -> MapScreen()
                         AppScreen.Profile -> ProfileScreen()
                     }
                 }

@@ -15,7 +15,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven {
             url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
-            /*
+            
             authentication {
                 create<BasicAuthentication>("basic")
             }
@@ -39,7 +39,7 @@ dependencyResolutionManagement {
                 password = token
             }
 
-             */
+            
         }
     }
 }
