@@ -46,6 +46,22 @@ class FirebaseInterface {
         private var INSTANCE: FirebaseInterface = FirebaseInterface()
         private var initialized: Boolean = false
 
+        fun initializeForWeb() {
+            try {
+                println("[FirebaseInterface] init start")
+                val auth = Firebase.auth
+                println("[FirebaseInterface] auth instance acquired: $auth")
+                if (USE_FIREBASE_EMULATOR) {auth.useEmulator(EMULATOR_IP, 9099)}
+                val db = Firebase.firestore
+                println("[FirebaseInterface] firestore instance acquired: $db")
+                if (USE_FIREBASE_EMULATOR) {db.useEmulator(EMULATOR_IP, 8080)}
+                println("[FirebaseInterface] emulator endpoints configured")
+            } catch (t: Throwable) {
+                println("[FirebaseInterface] initialization failed: ${t.message}")
+                throw t
+            }
+        }
+
         fun getInstance(): FirebaseInterface {
             if (!initialized) {
                 // Only use emulators when explicitly enabled
@@ -56,21 +72,9 @@ class FirebaseInterface {
                 initialized = true
             }
             return INSTANCE
-object FirebaseInterface {
-    fun initializeForWeb() {
-        try {
-            println("[FirebaseInterface] init start")
-            val auth = Firebase.auth
-            println("[FirebaseInterface] auth instance acquired: $auth")
-            auth.useEmulator(EMULATOR_IP, 9099)
-            val db = Firebase.firestore
-            println("[FirebaseInterface] firestore instance acquired: $db")
-            db.useEmulator(EMULATOR_IP, 8080)
-            println("[FirebaseInterface] emulator endpoints configured")
-        } catch (t: Throwable) {
-            println("[FirebaseInterface] initialization failed: ${t.message}")
-            throw t
+
         }
+        
     }
 
     fun isSignedIn(): Boolean {
