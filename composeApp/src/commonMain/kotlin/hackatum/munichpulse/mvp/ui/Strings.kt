@@ -35,11 +35,11 @@ data class AppStrings(
 )
 
 val EnStrings = AppStrings(
-    appName = "MunichPulse",
+    appName = "Munich Pulse",
     slogan = "Find your beat in the city.",
     loginNameLabel = "What should we call you?",
-    loginLocalLabel = "I am a Local",
-    loginNewbyLabel = "Newby",
+    loginLocalLabel = "I am a Area Expert",
+    loginNewbyLabel = "Explorer",
     loginLocalSubLabel = "I know my way around Munich",
     loginButton = "Start Exploring",
     loginGoogle = "Login with Google",

@@ -19,6 +19,7 @@ expect fun MapComponent(
     modifier: Modifier = Modifier,
     mapController: MapController,
     userLocation: Location,
+    otherPeople: List<Location>,
     events: List<MapEvent>,
     selectedFilter: String,
     onNavigateToEvent: (String) -> Unit

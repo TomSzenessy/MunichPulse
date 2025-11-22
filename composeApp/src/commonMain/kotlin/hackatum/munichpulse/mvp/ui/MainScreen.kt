@@ -39,7 +39,9 @@ fun MainScreen(onEventClick: (String) -> Unit) {
     var currentScreen by remember { mutableStateOf(AppScreen.Home) }
     val strings = LocalAppStrings.current
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize().background(
+        if (currentScreen == AppScreen.Map) Color.Transparent else MaterialTheme.colorScheme.background
+    )) {
         val isWideScreen = maxWidth > 800.dp
 
         Row(modifier = Modifier.fillMaxSize()) {

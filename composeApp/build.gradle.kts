@@ -41,6 +41,7 @@ kotlin {
 
             implementation("com.mapbox.maps:android:${libs.versions.mapbox.get()}")
             implementation("com.mapbox.extension:maps-compose:${libs.versions.mapbox.get()}")
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -76,6 +77,7 @@ kotlin {
             implementation(devNpm("webpack-cli", "5.1.4"))
             implementation(devNpm("os-browserify", "0.3.0"))
             implementation(devNpm("path-browserify", "1.0.1"))
+            implementation(npm("mapbox-gl", "3.1.2"))
         }
     }
 }

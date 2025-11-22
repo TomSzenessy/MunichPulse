@@ -17,6 +17,11 @@ data class MapUiState(
     val searchQuery: String = "",
     val selectedFilter: String = "All",
     val userLocation: Location = Location(48.1351, 11.5820), // Munich Marienplatz (Blue Dot)
+    val otherPeople: List<Location> = listOf(
+        Location(48.1360, 11.5830),
+        Location(48.1345, 11.5810),
+        Location(48.1355, 11.5840)
+    ),
     val events: List<MapEvent> = listOf(
         MapEvent("1", "Jazz Night", Location(48.137154, 11.576124), "Music"),
         MapEvent("2", "Food Truck Festival", Location(48.140000, 11.590000), "Food"),

@@ -45,6 +45,7 @@ fun MapScreen(
             modifier = Modifier.fillMaxSize(),
             mapController = mapController,
             userLocation = uiState.userLocation,
+            otherPeople = uiState.otherPeople,
             events = uiState.events,
             selectedFilter = uiState.selectedFilter,
             onNavigateToEvent = onNavigateToEvent

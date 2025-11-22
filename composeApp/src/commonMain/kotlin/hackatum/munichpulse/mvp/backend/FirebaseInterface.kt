@@ -19,7 +19,7 @@ const val USER_IS_LOCAL_PARAM: String = "isLocal"
 const val USER_NAME_PARAM: String = "name"
 
 // Toggle to route Firebase SDKs to local emulator. Keep false for production.
-const val USE_FIREBASE_EMULATOR: Boolean = true
+const val USE_FIREBASE_EMULATOR: Boolean = false
 
 // Host to reach the local Emulator Suite from the app runtime.
 const val EMULATOR_IP: String = "131.159.207.110"
@@ -51,11 +51,13 @@ class FirebaseInterface {
                 println("[FirebaseInterface] init start")
                 val auth = Firebase.auth
                 println("[FirebaseInterface] auth instance acquired: $auth")
-                if (USE_FIREBASE_EMULATOR) {auth.useEmulator(EMULATOR_IP, 9099)}
+                // Use localhost for Web to avoid CORS/Network issues with LAN IP
+                if (USE_FIREBASE_EMULATOR) {auth.useEmulator("localhost", 9099)}
                 val db = Firebase.firestore
                 println("[FirebaseInterface] firestore instance acquired: $db")
-                if (USE_FIREBASE_EMULATOR) {db.useEmulator(EMULATOR_IP, 8080)}
+                if (USE_FIREBASE_EMULATOR) {db.useEmulator("localhost", 8080)}
                 println("[FirebaseInterface] emulator endpoints configured")
+                initialized = true
             } catch (t: Throwable) {
                 println("[FirebaseInterface] initialization failed: ${t.message}")
                 throw t
@@ -132,9 +134,12 @@ class FirebaseInterface {
             try {
                 // Only update if different to avoid unnecessary network calls
                 if (currentUser.displayName != name) {
-                    currentUser.updateProfile(displayName = name)
+                    // Explicitly pass photoURL to avoid issues with some backends/emulators
+                    // expecting a string if the field is present in the payload.
+                    currentUser.updateProfile(displayName = name, photoUrl = currentUser.photoURL)
                 }
-            } catch (_: Throwable) {
+            } catch (e: Throwable) {
+                println("Failed to update profile: ${e.message}")
                 // Ignore failures for profile update so Firestore upsert still succeeds
             }
         }

@@ -19,8 +19,11 @@ import hackatum.munichpulse.mvp.ui.navigation.Screen
 import hackatum.munichpulse.mvp.ui.theme.UrbanPulseTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
+import hackatum.munichpulse.mvp.data.repository.SettingsRepository
+
 @Composable
 fun App() {
+    val isDarkMode by SettingsRepository.isDarkMode.collectAsState()
 
     suspend fun startUp() {
         val List : List<Event> = loadEventsFromResources("composeResources/files/mock_events_two.json")
@@ -33,7 +36,7 @@ fun App() {
     }
 
     ProvideAppStrings {
-        UrbanPulseTheme {
+        UrbanPulseTheme(useDarkTheme = isDarkMode) {
             val navController = rememberNavController()
             
             NavHost(navController = navController, startDestination = Screen.Splash.route) {
