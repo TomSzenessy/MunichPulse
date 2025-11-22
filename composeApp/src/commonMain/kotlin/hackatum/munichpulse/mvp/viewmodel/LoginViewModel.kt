@@ -1,9 +1,13 @@
 package hackatum.munichpulse.mvp.viewmodel
 
 import androidx.lifecycle.ViewModel
+import hackatum.munichpulse.mvp.ViewController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel for the Login screen.
@@ -40,11 +44,17 @@ class LoginViewModel : ViewModel() {
      */
     fun login(name: String, isLocal: Boolean, onResult: (Boolean) -> Unit) {
         setLoading(true)
-        // Simulate login delay
-        // In a real app, this would call a repository
-        onResult(true)
-        setLoading(false)
+        CoroutineScope(Dispatchers.Default).launch {
+            logIn(name, isLocal)
+            onResult(true)
+            ViewController.getInstance().closeSignInScreen()
+            setLoading(false)
+        }
     }
+}
+
+fun logIn(name: String, isLocal: Boolean) {
+    ViewController.getInstance().logIn(name, isLocal)
 }
 
 data class LoginUiState(

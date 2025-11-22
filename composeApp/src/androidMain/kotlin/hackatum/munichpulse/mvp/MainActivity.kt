@@ -24,12 +24,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview
-@Composable
-fun AppAndroidPreview() {
-    ProvideAppStrings {
-        UrbanPulseTheme {
-            LoginScreen(onLoginSuccess = { _, _ -> })
-        }
-    }
-}

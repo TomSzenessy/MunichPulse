@@ -13,33 +13,26 @@ import androidx.compose.runtime.getValue
 @Composable
 fun App(database: MunichPulseDatabase) {
     LaunchedEffect(Unit) {
+        // Initialize repositories
         GroupRepository.init(database)
-    }
-
-    ProvideAppStrings {
-        UrbanPulseTheme {
-            var isLoggedIn by remember { mutableStateOf(false) }
-
-            if (isLoggedIn) {
-                MainScreen()
-            } else {
-                LoginScreen(
-                    onLoginSuccess = { name, isLocal ->
-                        // TODO: Save user session (name, isLocal)
-                        isLoggedIn = true
-                    }
-                )
-            }
+        // One-time check at app start: if already logged in, skip login screen
+        if (ViewController.getInstance().isLoggedIn()) {
+            ViewController.getInstance().closeSignInScreen()
         }
     }
-}
 
-@Preview
-@Composable
-fun AppPreview() {
     ProvideAppStrings {
         UrbanPulseTheme {
-            LoginScreen(onLoginSuccess = { _, _ -> })
+            val showLogin by ViewController.getInstance().showLogInScreen().collectAsState()
+
+            if (showLogin) {
+                LoginScreen(onLoginSuccess = { name, isLocal ->
+                    ViewController.getInstance().closeSignInScreen()
+                }
+                )
+            } else {
+                MainScreen()
+            }
         }
     }
 }
