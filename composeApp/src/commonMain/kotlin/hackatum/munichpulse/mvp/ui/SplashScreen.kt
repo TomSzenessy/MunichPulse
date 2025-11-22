@@ -20,7 +20,7 @@ import hackatum.munichpulse.mvp.ui.theme.PrimaryGreen
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import munichpulse.composeapp.generated.resources.Res
-import munichpulse.composeapp.generated.resources.icon
+import munichpulse.composeapp.generated.resources.icon_png
 
 @Composable
 fun SplashScreen(onSplashFinished: () -> Unit) {
@@ -38,7 +38,7 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(Res.drawable.icon),
+            painter = painterResource(Res.drawable.icon_png),
             contentDescription = "App Logo",
             modifier = Modifier.size(128.dp)
         )

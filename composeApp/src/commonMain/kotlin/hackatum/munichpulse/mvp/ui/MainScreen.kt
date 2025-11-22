@@ -81,6 +81,7 @@ fun MainScreen(onEventClick: (String) -> Unit) {
             }
 
             Scaffold(
+                containerColor = if (currentScreen == AppScreen.Map) Color.Transparent else MaterialTheme.colorScheme.background,
                 bottomBar = {
                     if (!isWideScreen) {
                         NavigationBar(

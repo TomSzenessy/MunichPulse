@@ -48,6 +48,10 @@ fun main() {
     // Initialize Persistence
     // SettingsRepository.init(settings) // TODO: Fix SettingsRepository
 
+    val canvasStyle = document.createElement("style")
+    canvasStyle.innerHTML = "canvas { z-index: 1 !important; position: relative; }"
+    document.head?.appendChild(canvasStyle)
+
     onWasmReady {
         ComposeViewport(document.body!!) {
             App()

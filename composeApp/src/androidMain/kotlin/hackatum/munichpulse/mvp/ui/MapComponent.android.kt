@@ -155,17 +155,3 @@ fun createPinBitmap(color: Int): Bitmap {
     
     return bitmap
 }
-        style = Paint.Style.FILL
-    }
-    val strokePaint = Paint().apply {
-        this.color = android.graphics.Color.WHITE
-        isAntiAlias = true
-        style = Paint.Style.STROKE
-        strokeWidth = 8f
-    }
-    
-    val radius = size / 2f
-    canvas.drawCircle(radius, radius, radius - 4, paint)
-    canvas.drawCircle(radius, radius, radius - 4, strokePaint)
-    return bitmap
-}

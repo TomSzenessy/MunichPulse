@@ -19,7 +19,7 @@ const val USER_IS_LOCAL_PARAM: String = "isLocal"
 const val USER_NAME_PARAM: String = "name"
 
 // Toggle to route Firebase SDKs to local emulator. Keep false for production.
-const val USE_FIREBASE_EMULATOR: Boolean = false
+const val USE_FIREBASE_EMULATOR: Boolean = true
 
 // Host to reach the local Emulator Suite from the app runtime.
 const val EMULATOR_IP: String = "131.159.207.110"
@@ -52,10 +52,10 @@ class FirebaseInterface {
                 val auth = Firebase.auth
                 println("[FirebaseInterface] auth instance acquired: $auth")
                 // Use localhost for Web to avoid CORS/Network issues with LAN IP
-                if (USE_FIREBASE_EMULATOR) {auth.useEmulator("localhost", 9099)}
+                if (USE_FIREBASE_EMULATOR) {auth.useEmulator(EMULATOR_IP, 9099)}
                 val db = Firebase.firestore
                 println("[FirebaseInterface] firestore instance acquired: $db")
-                if (USE_FIREBASE_EMULATOR) {db.useEmulator("localhost", 8080)}
+                if (USE_FIREBASE_EMULATOR) {db.useEmulator(EMULATOR_IP, 8080)}
                 println("[FirebaseInterface] emulator endpoints configured")
                 initialized = true
             } catch (t: Throwable) {

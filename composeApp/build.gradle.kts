@@ -71,7 +71,6 @@ kotlin {
         }
         jsMain.dependencies {
             implementation(libs.ktor.client.js)
-            // implementation(npm("firebase", "10.7.1")) // Firebase JS SDK - removed to avoid duplication with firebase-kotlin-sdk
             implementation(devNpm("copy-webpack-plugin", "9.1.0"))
             implementation(devNpm("webpack", "5.88.2"))
             implementation(devNpm("webpack-cli", "5.1.4"))
