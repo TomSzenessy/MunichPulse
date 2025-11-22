@@ -9,10 +9,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -185,7 +185,7 @@ fun ChatView(group: Group, onBack: () -> Unit, onSendMessage: (String) -> Unit) 
                 title = { Text(title, color = MaterialTheme.colorScheme.onBackground, fontSize = 18.sp) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onBackground)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onBackground)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
@@ -224,7 +224,7 @@ fun ChatView(group: Group, onBack: () -> Unit, onSendMessage: (String) -> Unit) 
                         .size(48.dp)
                         .background(PrimaryGreen, CircleShape)
                 ) {
-                    Icon(Icons.Default.Send, contentDescription = "Send", tint = Color.Black)
+                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send", tint = Color.Black)
                 }
             }
         },

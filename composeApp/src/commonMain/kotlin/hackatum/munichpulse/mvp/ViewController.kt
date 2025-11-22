@@ -1,6 +1,5 @@
 package hackatum.munichpulse.mvp
 
-import androidx.lifecycle.ViewModel
 import hackatum.munichpulse.mvp.backend.FirebaseInterface
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -9,15 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class ViewController : ViewModel() {
+object ViewController {
 
-    companion object {
-        var INSTANCE: ViewController = ViewController()
-
-        fun getInstance(): ViewController {
-            return INSTANCE
-        }
-    }
     // Start with the Login screen visible until user signs in
     private val _showSignInScreen = MutableStateFlow(true)
     private val showSignInScreen: StateFlow<Boolean> = _showSignInScreen.asStateFlow()
@@ -31,26 +23,26 @@ class ViewController : ViewModel() {
     }
 
     fun isLoggedIn(): Boolean {
-        return FirebaseInterface.getInstance().isSignedIn()
+        return FirebaseInterface.isSignedIn()
     }
 
     fun logIn(name: String, isLocal: Boolean) {
         CoroutineScope(Dispatchers.Default).launch {
-            FirebaseInterface.getInstance().userSignIn(name, isLocal)
+            FirebaseInterface.userSignIn(name, isLocal)
         }
     }
 
     // Sign in directly with a Google ID token (e.g., on a fresh install or another device)
     fun signInWithGoogle(idToken: String, name: String? = null, isLocal: Boolean? = null) {
         CoroutineScope(Dispatchers.Default).launch {
-            FirebaseInterface.getInstance().signInWithGoogle(idToken, name, isLocal)
+            FirebaseInterface.signInWithGoogle(idToken, name, isLocal)
         }
     }
 
     // Link the currently signed-in (likely anonymous) account with Google to upgrade it
     fun linkWithGoogle(idToken: String, name: String? = null, isLocal: Boolean? = null) {
         CoroutineScope(Dispatchers.Default).launch {
-            FirebaseInterface.getInstance().linkWithGoogle(idToken, name, isLocal)
+            FirebaseInterface.linkWithGoogle(idToken, name, isLocal)
         }
     }
 }

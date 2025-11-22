@@ -3,6 +3,7 @@ package hackatum.munichpulse.mvp.ui
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,33 +19,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import hackatum.munichpulse.mvp.ui.LocalAppStrings
 import hackatum.munichpulse.mvp.ui.theme.PrimaryGreen
-import hackatum.munichpulse.mvp.ui.components.MapView
-
 import hackatum.munichpulse.mvp.viewmodel.MapViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun MapScreen(
-    viewModel: MapViewModel = androidx.lifecycle.viewmodel.compose.viewModel { MapViewModel() }
+    viewModel: MapViewModel = androidx.lifecycle.viewmodel.compose.viewModel { MapViewModel() },
+    onNavigateToEvent: (String) -> Unit = {} // Callback for navigation
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val strings = LocalAppStrings.current
     
+    val mapController = rememberMapController()
+
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val isWideScreen = maxWidth > 800.dp
 
-        // Map View (Full Screen)
-        MapView(
-            modifier = Modifier.fillMaxSize()
+        // --- MAP VIEW IMPLEMENTATION ---
+        MapComponent(
+            modifier = Modifier.fillMaxSize(),
+            mapController = mapController,
+            userLocation = uiState.userLocation,
+            events = uiState.events,
+            selectedFilter = uiState.selectedFilter,
+            onNavigateToEvent = onNavigateToEvent
         )
+        // -------------------------------
 
         if (isWideScreen) {
-            // Desktop Layout: Sidebar (Floating)
+            // Desktop Sidebar
             Box(modifier = Modifier.fillMaxSize()) {
-                // Sidebar
                 Card(
                     modifier = Modifier
                         .width(320.dp)
@@ -70,7 +79,6 @@ fun MapScreen(
                         Text("Filter Events", style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onSurface))
                         Spacer(modifier = Modifier.height(12.dp))
                         
-                        // Interactive Filters
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             FilterChip(selected = uiState.selectedFilter == "All", onClick = { viewModel.setFilter("All") }, label = { Text("All") })
                             FilterChip(selected = uiState.selectedFilter == "Music", onClick = { viewModel.setFilter("Music") }, label = { Text("Music") })
@@ -86,13 +94,15 @@ fun MapScreen(
                     .align(Alignment.BottomEnd)
                     .padding(32.dp)
             ) {
-                ZoomControls()
+                // Pass actions to zoom controls
+                ZoomControls(
+                    onZoomIn = { mapController.zoomIn() },
+                    onZoomOut = { mapController.zoomOut() }
+                )
             }
             
         } else {
             // Mobile Layout
-            
-            // Search Bar (Top)
             Box(modifier = Modifier.align(Alignment.TopCenter).padding(top = 16.dp)) {
                 SearchBar(
                     query = uiState.searchQuery,
@@ -100,21 +110,23 @@ fun MapScreen(
                 )
             }
 
-            // Zoom Controls (Right)
             Column(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .padding(end = 16.dp)
                     .padding(bottom = 100.dp)
             ) {
-                ZoomControls()
+                ZoomControls(
+                    onZoomIn = { mapController.zoomIn() },
+                    onZoomOut = { mapController.zoomOut() }
+                )
                 Spacer(modifier = Modifier.height(12.dp))
-                NavigationButton()
+                NavigationButton(onClick = {
+                    // Reset camera to user location
+                    mapController.recenter(uiState.userLocation)
+                })
             }
 
-            // Waveform Animation (Bottom) - Optimized: Only show if needed, maybe simplified
-            // User reported lag, so let's make it lighter or remove if not essential.
-            // Keeping it simple for now but ensuring it doesn't block main thread.
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -129,13 +141,17 @@ fun MapScreen(
     }
 }
 
+// --- HELPER TO CREATE DOTS (Replaces Drawables) ---
+// Moved to Android implementation
+
+
 @Composable
 fun SearchBar(modifier: Modifier = Modifier, query: String = "", onQueryChange: (String) -> Unit = {}) {
     val strings = LocalAppStrings.current
     Surface(
         modifier = modifier
             .height(48.dp)
-            .then(if (modifier == Modifier) Modifier.width(300.dp) else Modifier), // Default width for mobile
+            .then(if (modifier == Modifier) Modifier.width(300.dp) else Modifier),
         shape = RoundedCornerShape(24.dp),
         color = MaterialTheme.colorScheme.surface,
         shadowElevation = 4.dp,
@@ -147,43 +163,45 @@ fun SearchBar(modifier: Modifier = Modifier, query: String = "", onQueryChange: 
         ) {
             Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.width(8.dp))
-            // Simple Text for now, but could be BasicTextField
             Text(if (query.isEmpty()) strings.searchPlaceholder else query, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
 
+// Updated ZoomControls to accept callbacks
 @Composable
-fun ZoomControls() {
+fun ZoomControls(onZoomIn: () -> Unit, onZoomOut: () -> Unit) {
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface)
             .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
     ) {
-        IconButton(onClick = { /* Zoom In */ }) {
+        IconButton(onClick = onZoomIn) {
             Icon(Icons.Default.Add, contentDescription = "Zoom In", tint = MaterialTheme.colorScheme.onSurface)
         }
         Box(modifier = Modifier.height(1.dp).width(40.dp).background(MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)))
-        IconButton(onClick = { /* Zoom Out */ }) {
+        IconButton(onClick = onZoomOut) {
             Icon(Icons.Default.Remove, contentDescription = "Zoom Out", tint = MaterialTheme.colorScheme.onSurface)
         }
     }
 }
 
+// Updated Navigation Button to handle click
 @Composable
-fun NavigationButton() {
+fun NavigationButton(onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(48.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface)
-            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(12.dp)),
+            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
+            .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Icon(
             Icons.Default.Navigation,
-            contentDescription = "Navigate",
+            contentDescription = "Recenter",
             tint = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.rotate(45f)
         )
@@ -192,13 +210,12 @@ fun NavigationButton() {
 
 @Composable
 fun WaveformAnimation() {
-    // Reduced count for performance
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.height(40.dp)
     ) {
-        repeat(8) { index -> // Reduced from 12 to 8
+        repeat(8) { index -> 
             val infiniteTransition = rememberInfiniteTransition()
             val scale by infiniteTransition.animateFloat(
                 initialValue = 0.2f,

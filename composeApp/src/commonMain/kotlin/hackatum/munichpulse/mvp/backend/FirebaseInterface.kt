@@ -24,18 +24,20 @@ const val EVENT_TRACK_SUB_COLLECTION_POSITION: String = "gps_coords"
 
 
 
-class FirebaseInterface {
-    companion object {
-        private var INSTANCE: FirebaseInterface = FirebaseInterface()
-        private var initialized: Boolean = false
-
-        fun getInstance(): FirebaseInterface {
-            if (!initialized) {
-                Firebase.auth.useEmulator(EMULATOR_IP, 9099)
-                Firebase.firestore.useEmulator(EMULATOR_IP, 8080)
-                initialized = true
-            }
-            return INSTANCE
+object FirebaseInterface {
+    fun initializeForWeb() {
+        try {
+            println("[FirebaseInterface] init start")
+            val auth = Firebase.auth
+            println("[FirebaseInterface] auth instance acquired: $auth")
+            auth.useEmulator(EMULATOR_IP, 9099)
+            val db = Firebase.firestore
+            println("[FirebaseInterface] firestore instance acquired: $db")
+            db.useEmulator(EMULATOR_IP, 8080)
+            println("[FirebaseInterface] emulator endpoints configured")
+        } catch (t: Throwable) {
+            println("[FirebaseInterface] initialization failed: ${t.message}")
+            throw t
         }
     }
 

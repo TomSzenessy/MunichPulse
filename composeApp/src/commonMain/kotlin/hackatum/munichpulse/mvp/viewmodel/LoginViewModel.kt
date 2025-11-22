@@ -54,14 +54,24 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             logIn(name, isLocal)
             onResult(true)
-            ViewController.getInstance().closeSignInScreen()
+            ViewController.closeSignInScreen()
+            setLoading(false)
+        }
+    }
+
+    fun loginWithGoogle(idToken: String, name: String?, isLocal: Boolean, onResult: (Boolean) -> Unit) {
+        setLoading(true)
+        viewModelScope.launch {
+            ViewController.signInWithGoogle(idToken, name, isLocal)
+            onResult(true)
+            ViewController.closeSignInScreen()
             setLoading(false)
         }
     }
 }
 
 fun logIn(name: String, isLocal: Boolean) {
-    ViewController.getInstance().logIn(name, isLocal)
+    ViewController.logIn(name, isLocal)
 }
 
 data class LoginUiState(

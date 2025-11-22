@@ -31,7 +31,7 @@ fun App() {
                 composable(Screen.Splash.route) {
                     SplashScreen(
                         onSplashFinished = {
-                            if (ViewController.getInstance().isLoggedIn()) {
+                            if (ViewController.isLoggedIn()) {
                                 navController.navigate(Screen.Main.route) {
                                     popUpTo(Screen.Splash.route) { inclusive = true }
                                 }

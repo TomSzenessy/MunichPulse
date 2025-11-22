@@ -36,6 +36,11 @@ kotlin {
             // Use explicit versions for Firebase Android SDKs within KMP androidMain to avoid BOM issues
             implementation("com.google.firebase:firebase-auth-ktx:23.2.1")
             implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
+            implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
+            implementation("com.google.android.gms:play-services-auth:21.0.0")
+
+            implementation("com.mapbox.maps:android:${libs.versions.mapbox.get()}")
+            implementation("com.mapbox.extension:maps-compose:${libs.versions.mapbox.get()}")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -65,7 +70,7 @@ kotlin {
         }
         jsMain.dependencies {
             implementation(libs.ktor.client.js)
-            implementation(npm("firebase", "10.7.1")) // Firebase JS SDK
+            // implementation(npm("firebase", "10.7.1")) // Firebase JS SDK - removed to avoid duplication with firebase-kotlin-sdk
             implementation(devNpm("copy-webpack-plugin", "9.1.0"))
             implementation(devNpm("webpack", "5.88.2"))
             implementation(devNpm("webpack-cli", "5.1.4"))

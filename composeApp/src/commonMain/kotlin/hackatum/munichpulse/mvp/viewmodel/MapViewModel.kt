@@ -1,39 +1,38 @@
 package hackatum.munichpulse.mvp.viewmodel
 
 import androidx.lifecycle.ViewModel
+import hackatum.munichpulse.mvp.model.Location
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-/**
- * ViewModel for the Map screen.
- * Handles map state, search queries, and event filtering.
- */
+data class MapEvent(
+    val id: String,
+    val title: String,
+    val location: Location,
+    val type: String = "Music"
+)
+
+data class MapUiState(
+    val searchQuery: String = "",
+    val selectedFilter: String = "All",
+    val userLocation: Location = Location(48.1351, 11.5820), // Munich Marienplatz (Blue Dot)
+    val events: List<MapEvent> = listOf(
+        MapEvent("1", "Jazz Night", Location(48.137154, 11.576124), "Music"),
+        MapEvent("2", "Food Truck Festival", Location(48.140000, 11.590000), "Food"),
+        MapEvent("3", "Tech Hackathon", Location(48.150000, 11.560000), "Tech")
+    )
+)
+
 class MapViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(MapUiState())
-    /**
-     * The current UI state of the map screen.
-     */
     val uiState = _uiState.asStateFlow()
 
-    /**
-     * Updates the search query.
-     * @param query The new search query.
-     */
     fun setSearchQuery(query: String) {
         _uiState.update { it.copy(searchQuery = query) }
     }
 
-    /**
-     * Updates the selected filter.
-     * @param filter The filter to apply (e.g., "All", "Music", "Food").
-     */
     fun setFilter(filter: String) {
         _uiState.update { it.copy(selectedFilter = filter) }
     }
 }
-
-data class MapUiState(
-    val searchQuery: String = "",
-    val selectedFilter: String = "All"
-)
