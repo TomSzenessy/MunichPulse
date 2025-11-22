@@ -5,10 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MunichPulse</title>
     <link type="text/css" rel="stylesheet" href="styles.css">
-    <script type="application/javascript" src="composeApp.js"></script>
-    const firebaseConfig = { apiKey: "...", authDomain: "...", projectId: "..." };
-    firebase.initializeApp(firebaseConfig);
+    <!-- Firebase JS SDK (compat builds for easier integration) -->
+    <script src="https://www.gstatic.com/firebasejs/12.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore-compat.js"></script>
+
+    <!-- Your Firebase Web configuration. Put real values in firebase-config.js (not in this HTML). -->
+    <script src="firebase-config.js"></script>
+    <script>
+        // Initialize Firebase using the config exposed by firebase-config.js
+        if (typeof firebaseConfig !== 'undefined') {
+            firebase.initializeApp(firebaseConfig);
+        } else {
+            console.error('firebaseConfig is not defined. Please create src/webMain/resources/firebase-config.js with your Web app config.');
+        }
+    </script>
 </head>
 <body>
+<script type="application/javascript" src="composeApp.js"></script>
 </body>
 </html>

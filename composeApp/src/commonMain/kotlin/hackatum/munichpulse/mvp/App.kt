@@ -4,22 +4,25 @@ import androidx.compose.runtime.*
 import hackatum.munichpulse.mvp.ui.MainScreen
 import hackatum.munichpulse.mvp.ui.UrbanPulseTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.getValue
 
 @Composable
 @Preview
 fun App() {
     UrbanPulseTheme {
-        var isLoggedIn by remember { mutableStateOf(false) }
+        val showLogin by ViewController.getInstance().showLogInScreen().collectAsState()
+        val isLoggedIn = ViewController.getInstance().isLoggedIn()
 
-        if (isLoggedIn) {
-            MainScreen()
-        } else {
+        if (isLoggedIn) ViewController.getInstance().closeSignInScreen()
+
+        if (showLogin) {
             hackatum.munichpulse.mvp.ui.LoginScreen(
-                onLoginSuccess = { name, isLocal -> 
-                    // TODO: Save user session (name, isLocal)
-                    isLoggedIn = true 
+                onLoginSuccess = { name, isLocal ->
+                    ViewController.getInstance().closeSignInScreen()
                 }
             )
+        } else {
+            MainScreen()
         }
     }
 }

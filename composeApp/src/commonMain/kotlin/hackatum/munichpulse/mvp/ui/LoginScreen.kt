@@ -11,11 +11,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import hackatum.munichpulse.mvp.ViewController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(onLoginSuccess: (String, Boolean) -> Unit) {
@@ -128,10 +131,13 @@ fun LoginScreen(onLoginSuccess: (String, Boolean) -> Unit) {
             // Login Button
             Button(
                 onClick = { 
-                    if (name.isNotBlank()) {
+                    if (name.isNotBlank() && !isLoading) {
                         isLoading = true
-                        // Simulate network delay
-                        onLoginSuccess(name, isLocal) 
+                        CoroutineScope(Dispatchers.Default).launch {
+                            logIn(name, isLocal)
+                            onLoginSuccess(name, isLocal)
+                            isLoading = false
+                        }
                     }
                 },
                 enabled = name.isNotBlank(),
@@ -157,4 +163,8 @@ fun LoginScreen(onLoginSuccess: (String, Boolean) -> Unit) {
             }
         }
     }
+}
+
+fun logIn(name: String, isLocal: Boolean) {
+    ViewController.getInstance().logIn(name, isLocal)
 }

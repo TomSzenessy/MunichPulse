@@ -1,5 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -15,7 +13,7 @@ plugins {
 kotlin {
     androidTarget {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
     
@@ -36,8 +34,8 @@ kotlin {
             implementation(libs.androidx.activity.compose)
 
             // Use explicit versions for Firebase Android SDKs within KMP androidMain to avoid BOM issues
-            implementation("com.google.firebase:firebase-auth-ktx:23.0.0")
-            implementation("com.google.firebase:firebase-firestore-ktx:25.0.0")
+            implementation("com.google.firebase:firebase-auth-ktx:23.2.1")
+            implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -56,8 +54,9 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.kotlinx.coroutines.core)
 
-            implementation("dev.gitlive:firebase-firestore:2.4.0") // example
-            implementation("dev.gitlive:firebase-auth:2.4.0")
+            implementation(libs.firebase.firestore) // example
+            implementation(libs.firebase.auth)
+            implementation(libs.kotlinx.coroutines.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -90,8 +89,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
