@@ -39,4 +39,18 @@ class ViewController : ViewModel() {
             FirebaseInterface.getInstance().userSignIn(name, isLocal)
         }
     }
+
+    // Sign in directly with a Google ID token (e.g., on a fresh install or another device)
+    fun signInWithGoogle(idToken: String, name: String? = null, isLocal: Boolean? = null) {
+        CoroutineScope(Dispatchers.Default).launch {
+            FirebaseInterface.getInstance().signInWithGoogle(idToken, name, isLocal)
+        }
+    }
+
+    // Link the currently signed-in (likely anonymous) account with Google to upgrade it
+    fun linkWithGoogle(idToken: String, name: String? = null, isLocal: Boolean? = null) {
+        CoroutineScope(Dispatchers.Default).launch {
+            FirebaseInterface.getInstance().linkWithGoogle(idToken, name, isLocal)
+        }
+    }
 }

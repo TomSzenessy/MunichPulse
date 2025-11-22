@@ -44,8 +44,6 @@ ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "kto
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
-firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebase-kotlin" }
-firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "firebase-kotlin" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version = "1.1.1" }
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-web = { module = "app.cash.sqldelight:web-worker-driver", version.ref = "sqldelight" }
