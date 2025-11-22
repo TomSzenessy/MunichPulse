@@ -49,7 +49,7 @@ fun main() {
     // SettingsRepository.init(settings) // TODO: Fix SettingsRepository
 
     val canvasStyle = document.createElement("style")
-    canvasStyle.innerHTML = "canvas { z-index: 1 !important; position: relative; }"
+    canvasStyle.innerHTML = "canvas { z-index: 2 !important; position: absolute; top: 0; left: 0; background-color: transparent !important; } .mapboxgl-map { z-index: 1 !important; }"
     document.head?.appendChild(canvasStyle)
 
     onWasmReady {

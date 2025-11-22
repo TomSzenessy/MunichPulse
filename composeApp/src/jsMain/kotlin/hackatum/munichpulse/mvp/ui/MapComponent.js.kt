@@ -84,7 +84,7 @@ actual fun MapComponent(
             left = "0"
             width = "100%"
             height = "100%"
-            zIndex = "0" // Behind the canvas
+            zIndex = "1" // Behind the canvas but above background
         }
         document.body?.appendChild(mapContainer)
         
