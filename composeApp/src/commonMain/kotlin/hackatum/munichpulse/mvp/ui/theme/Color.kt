@@ -1,4 +1,4 @@
-package hackatum.munichpulse.mvp.ui
+package hackatum.munichpulse.mvp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

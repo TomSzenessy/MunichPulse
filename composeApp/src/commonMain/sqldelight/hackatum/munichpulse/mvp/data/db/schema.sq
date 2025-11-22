@@ -1,0 +1,63 @@
+CREATE TABLE LocalGroup (
+    id TEXT NOT NULL PRIMARY KEY,
+    eventId TEXT NOT NULL
+);
+
+CREATE TABLE LocalUser (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    avatarUrl TEXT,
+    isLocal INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0
+);
+
+CREATE TABLE GroupMember (
+    groupId TEXT NOT NULL,
+    userId TEXT NOT NULL,
+    PRIMARY KEY (groupId, userId),
+    FOREIGN KEY (groupId) REFERENCES LocalGroup(id) ON DELETE CASCADE,
+    FOREIGN KEY (userId) REFERENCES LocalUser(id) ON DELETE CASCADE
+);
+
+CREATE TABLE LocalMessage (
+    id TEXT NOT NULL PRIMARY KEY,
+    groupId TEXT NOT NULL,
+    senderId TEXT NOT NULL,
+    text TEXT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    FOREIGN KEY (groupId) REFERENCES LocalGroup(id) ON DELETE CASCADE,
+    FOREIGN KEY (senderId) REFERENCES LocalUser(id) ON DELETE CASCADE
+);
+
+-- Queries
+
+selectAllGroups:
+SELECT * FROM LocalGroup;
+
+insertGroup:
+INSERT OR REPLACE INTO LocalGroup(id, eventId) VALUES (?, ?);
+
+selectGroupMembers:
+SELECT u.* FROM LocalUser u
+JOIN GroupMember gm ON u.id = gm.userId
+WHERE gm.groupId = ?;
+
+insertUser:
+INSERT OR REPLACE INTO LocalUser(id, name, avatarUrl, isLocal) VALUES (?, ?, ?, ?);
+
+insertGroupMember:
+INSERT OR REPLACE INTO GroupMember(groupId, userId) VALUES (?, ?);
+
+selectGroupMessages:
+SELECT * FROM LocalMessage WHERE groupId = ? ORDER BY timestamp ASC;
+
+insertMessage:
+INSERT OR REPLACE INTO LocalMessage(id, groupId, senderId, text, timestamp) VALUES (?, ?, ?, ?, ?);
+
+deleteAllGroups:
+DELETE FROM LocalGroup;
+
+deleteAllUsers:
+DELETE FROM LocalUser;
+
+deleteAllMessages:
+DELETE FROM LocalMessage;

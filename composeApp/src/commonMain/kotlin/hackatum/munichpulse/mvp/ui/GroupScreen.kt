@@ -13,6 +13,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,39 +28,48 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import hackatum.munichpulse.mvp.domain.Group
-import hackatum.munichpulse.mvp.domain.GroupRepository
-import hackatum.munichpulse.mvp.domain.User
+import hackatum.munichpulse.mvp.data.model.Group
+import hackatum.munichpulse.mvp.data.model.ChatMessage
+import hackatum.munichpulse.mvp.data.repository.GroupRepository
+import hackatum.munichpulse.mvp.data.model.User
+import hackatum.munichpulse.mvp.ui.theme.PrimaryGreen
+import hackatum.munichpulse.mvp.ui.theme.DarkBackground
+
+import hackatum.munichpulse.mvp.viewmodel.GroupViewModel
 
 @Composable
-fun GroupScreen() {
-    val groups by GroupRepository.getMyGroups().collectAsState(initial = emptyList())
-    var selectedGroup by remember { mutableStateOf<Group?>(null) }
+fun GroupScreen(
+    viewModel: GroupViewModel = androidx.lifecycle.viewmodel.compose.viewModel { GroupViewModel() }
+) {
+    val groups by viewModel.groups.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val strings = LocalAppStrings.current
 
     // Update selected group when groups change (to reflect new messages)
-    val currentSelectedGroup = groups.find { it.id == selectedGroup?.id } ?: selectedGroup
+    val currentSelectedGroup = groups.find { it.id == uiState.selectedGroup?.id } ?: uiState.selectedGroup
 
     if (currentSelectedGroup != null) {
         ChatView(
             group = currentSelectedGroup,
-            onBack = { selectedGroup = null },
+            onBack = { viewModel.selectGroup(null) },
             onSendMessage = { text ->
                 // Mock current user
                 val currentUser = User("me", "Me", "https://lh3.googleusercontent.com/aida-public/AB6AXuCbnqZmET8ib9ye3aLMp1hzdx83rsDLhLVULmiB0q0VGCKLIOAwhQlGPB9IIeaRc0R_0VOLMb6vvCdwxQZJgE_6zHPmhC4DzPfiVcE8Uy4oxEfGoZ8RE4St7OzoKyiqducb2ycFd-fGovAv847DICaUifjadf3k7b5I2rKEST-xvtQxtKIMUQQGl2mfjWPvJ_cyYQ5yEHU3ZlaDdBbcgtYqWMxklrPlWMhvQQRhHF1MYiFFz8l0sEiOGZPmIicngq1glRco5qSBV4BR", true)
-                GroupRepository.sendMessage(currentSelectedGroup.id, text, currentUser)
+                viewModel.sendMessage(text, currentUser)
             }
         )
     } else {
-        GroupList(groups = groups, onGroupClick = { selectedGroup = it })
+        GroupList(groups = groups, onGroupClick = { viewModel.selectGroup(it) })
     }
 }
 
 @Composable
 fun GroupList(groups: List<Group>, onGroupClick: (Group) -> Unit) {
+    val strings = LocalAppStrings.current
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkBackground)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp)
     ) {
         Header()
@@ -73,6 +86,7 @@ fun GroupList(groups: List<Group>, onGroupClick: (Group) -> Unit) {
 
 @Composable
 private fun Header() {
+    val strings = LocalAppStrings.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -80,7 +94,7 @@ private fun Header() {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("Squads", color = TextPrimary, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+        Text(strings.squadsTab, color = MaterialTheme.colorScheme.onBackground, fontSize = 28.sp, fontWeight = FontWeight.Bold)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             GlassIconButton(Icons.Default.Search, "Search")
             GlassIconButton(Icons.Default.Add, "Add")
@@ -94,12 +108,12 @@ private fun GlassIconButton(icon: androidx.compose.ui.graphics.vector.ImageVecto
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape)
-            .background(DarkSurface.copy(alpha = 0.5f))
-            .border(1.dp, Color.White.copy(alpha = 0.1f), CircleShape)
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
+            .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), CircleShape)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Icon(icon, contentDescription = contentDescription, tint = TextSecondary)
+        Icon(icon, contentDescription = contentDescription, tint = MaterialTheme.colorScheme.onSurface)
     }
 }
 
@@ -120,15 +134,15 @@ fun GroupCard(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(DarkSurface.copy(alpha = 0.5f))
-            .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
+            .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), RoundedCornerShape(16.dp))
             .clickable(onClick = onClick)
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
-            Text(title, color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(title, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
                 if (statusColor == PrimaryGreen) {
                     Box(modifier = Modifier.size(8.dp).background(statusColor, CircleShape))
@@ -168,34 +182,34 @@ fun ChatView(group: Group, onBack: () -> Unit, onSendMessage: (String) -> Unit) 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(title, color = TextPrimary, fontSize = 18.sp) },
+                title = { Text(title, color = MaterialTheme.colorScheme.onBackground, fontSize = 18.sp) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onBackground)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBackground)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         },
         bottomBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(DarkSurface)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
                     value = messageText,
                     onValueChange = { messageText = it },
-                    placeholder = { Text("Type a message...", color = TextSecondary) },
+                    placeholder = { Text("Type a message...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(24.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PrimaryGreen,
-                        unfocusedBorderColor = DarkBorder,
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     )
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -210,11 +224,11 @@ fun ChatView(group: Group, onBack: () -> Unit, onSendMessage: (String) -> Unit) 
                         .size(48.dp)
                         .background(PrimaryGreen, CircleShape)
                 ) {
-                    Icon(Icons.Default.Send, contentDescription = "Send", tint = DarkBackground)
+                    Icon(Icons.Default.Send, contentDescription = "Send", tint = Color.Black)
                 }
             }
         },
-        containerColor = DarkBackground
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -233,7 +247,7 @@ fun ChatView(group: Group, onBack: () -> Unit, onSendMessage: (String) -> Unit) 
 }
 
 @Composable
-fun ChatBubble(message: hackatum.munichpulse.mvp.domain.ChatMessage, isMe: Boolean) {
+fun ChatBubble(message: ChatMessage, isMe: Boolean) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = if (isMe) Alignment.End else Alignment.Start
@@ -246,12 +260,12 @@ fun ChatBubble(message: hackatum.munichpulse.mvp.domain.ChatMessage, isMe: Boole
                     bottomStart = if (isMe) 16.dp else 0.dp,
                     bottomEnd = if (isMe) 0.dp else 16.dp
                 ))
-                .background(if (isMe) PrimaryGreen else DarkSurface)
+                .background(if (isMe) PrimaryGreen else MaterialTheme.colorScheme.surface)
                 .padding(12.dp)
         ) {
             Text(
                 text = message.text,
-                color = if (isMe) DarkBackground else TextPrimary,
+                color = if (isMe) Color.Black else MaterialTheme.colorScheme.onSurface,
                 fontSize = 16.sp
             )
         }

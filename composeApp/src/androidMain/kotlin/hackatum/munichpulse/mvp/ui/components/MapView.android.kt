@@ -50,9 +50,17 @@ actual fun MapView(
         factory = { context ->
             WebView(context).apply {
                 settings.javaScriptEnabled = true
+                settings.domStorageEnabled = true
                 webViewClient = WebViewClient()
                 loadDataWithBaseURL(null, mapHtml, "text/html", "UTF-8", null)
             }
+        },
+        update = { webView ->
+            // Update map camera if parameters change
+            // Note: This requires the map instance to be available in the global scope or accessible via JS
+            // For this simple implementation, we might just reload if needed, but better to call JS
+            // webView.evaluateJavascript("map.flyTo({center: [$longitude, $latitude], zoom: $zoom});", null)
+            // For now, we keep it simple as the map handles its own state mostly
         }
     )
 }

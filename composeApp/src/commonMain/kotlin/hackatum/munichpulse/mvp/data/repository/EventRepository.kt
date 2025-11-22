@@ -1,11 +1,26 @@
-package hackatum.munichpulse.mvp.domain
+package hackatum.munichpulse.mvp.data.repository
 
+import hackatum.munichpulse.mvp.data.model.Event
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
+/**
+ * Repository interface for accessing event data.
+ */
 interface EventRepository {
+    /**
+     * Returns a flow of trending events.
+     */
     fun getTrendingEvents(): Flow<List<Event>>
+    
+    /**
+     * Returns a flow of events near the user.
+     */
     fun getNearbyEvents(): Flow<List<Event>>
+    
+    /**
+     * Returns a flow of all available events.
+     */
     fun getAllEvents(): Flow<List<Event>>
 }
 
@@ -39,32 +54,26 @@ class MockEventRepository : EventRepository {
             title = "Street Food Market",
             location = "Werksviertel",
             imageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuDQJLTB34FdZDgETNFhkLJsLrQNOg-Ngjy_FQVqVDaDOOAfX_KH6vmACBk0orx0tEIr1nooiF7My5ROFmLTfYWnGZqCrJCHwaooCsjUoy0GnPsPwbQpn0kJUPJin_ZrkSGFcZ3Nm-bSeB7U-L3d5AURRVrYYE1EImgwm-I4UbsJQdBuT0b_XAB6YsS0guQ4Ybs3jTZsjgtRBGBcgWWrJgyuBgA9aQxSfWe88ZZ51UF9MftP6ECw0wdhY643uVAgtFAIvZdSZ2N6zzSz",
-            fullnessPercentage = 75
-        ),
-        Event(
-            id = "5",
-            title = "The Lumineers",
-            location = "Olympiahalle",
-            imageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuBOOv1m3Woq231e-WhVrHcG-u8L-_qhR7T5TTcWSIfK8VQGT-n0Q06rUx1nyIJEVF3nbWfx-bww0Y57g2iKovlw3_vHypDcF16D-O6LFkhGZXOjQVu-ZXU4m--F04vRzVsmGGzH6YkHa8vXC_Win3Ke4muZP2tKHd2PyK2_vU8UeLeqBx32Yod8b7bqXTXtG1iuKPuewMqK_3D3rFA28wlIzL76j-qdkVHx9TkMTfPs8hS3QoGxqBnHrP9jD2sKnYasoMbf4LSx1rHY",
-            fullnessPercentage = 95
-        ),
-        Event(
-            id = "6",
-            title = "Kocherlball",
-            location = "Englischer Garten",
-            imageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuCovLv2whviTCInAwuC0EufYELCYuyjxMkwoiuv6p7msdWCG3SU-_kvcYHr10WfqGvfZ88SjVdPBaIs77a1dibJ5UKkaLHGNmiLf4Qjc5aIDdi-f-DPolX6kywm1PUL7fzVi_NI36zipqeu82vdjuIUFQHjm1MmnJ4a4uzjbdzgr_05jMKquBKqEr7ru55B78av1F7FNONcZ_LittExNz1l9PuT5mpiFWgo_-TNQofQAiu7ZCLXS832tokc2hIWp3SJiq_wI_IAuAyw",
             fullnessPercentage = 60
         ),
         Event(
-            id = "7",
-            title = "Garbage Concert",
-            location = "Zenith",
-            imageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuCX2T5qOOI-lKwwPMME3vlTEzdwxd7v6e51aIDOzNh3HYEK8PRaySdk9H9CgKmIj75_U3G8G64iLjRXyohCnyjmDn6JlwEbSMHj1-9jgvywEzHtQCxjNXw70a3Jl7lPAkBReyl93y9Yp_hyf3T7_j715bUlIRjq94156OKhHFpfFXZSJKq_eW6S_nSiNyH2exI0xxmxyARi87MeeqnyHgTO6BzqcI_Ukg2Q9quYAd5BW3ZH0WkYQXwSEXK9CXg7LmCHN1dVo5Zbogv9",
+            id = "5",
+            title = "Olympiapark Concert",
+            location = "Olympiapark",
+            imageUrl = "https://images.unsplash.com/photo-1459749411177-0473ef71607b?q=80&w=2070&auto=format&fit=crop",
+            fullnessPercentage = 95,
+            isTrending = true
+        ),
+        Event(
+            id = "6",
+            title = "Pinakothek der Moderne",
+            location = "Maxvorstadt",
+            imageUrl = "https://images.unsplash.com/photo-1566054757965-8c4d79636511?q=80&w=2069&auto=format&fit=crop",
             fullnessPercentage = 30
         )
     )
 
     override fun getTrendingEvents(): Flow<List<Event>> = flowOf(events.filter { it.isTrending })
-    override fun getNearbyEvents(): Flow<List<Event>> = flowOf(events.filter { !it.isTrending })
-    override fun getAllEvents(): Flow<List<Event>> = flowOf(events)
+    override fun getNearbyEvents(): Flow<List<Event>> = flowOf(events.take(3)) // Mock nearby logic
+    override fun getAllEvents(): Flow<List<Event>> = flowOf<List<Event>>(events)
 }

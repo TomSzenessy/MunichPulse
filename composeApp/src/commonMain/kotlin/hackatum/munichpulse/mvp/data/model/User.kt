@@ -1,4 +1,4 @@
-package hackatum.munichpulse.mvp.domain
+package hackatum.munichpulse.mvp.data.model
 
 import kotlinx.serialization.Serializable
 

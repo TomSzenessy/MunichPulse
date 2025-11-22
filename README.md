@@ -1,5 +1,8 @@
 This is a Kotlin Multiplatform project targeting Android, Web.
 
+## Architecture
+This project follows the MVVM architecture. Please refer to [architecture.md](architecture.md) for a detailed explanation and diagram.
+
 * [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
   - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.

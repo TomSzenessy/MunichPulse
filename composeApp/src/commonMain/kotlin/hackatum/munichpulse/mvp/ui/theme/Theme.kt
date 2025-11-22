@@ -1,11 +1,12 @@
-package hackatum.munichpulse.mvp.ui
+package hackatum.munichpulse.mvp.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import hackatum.munichpulse.mvp.domain.SettingsRepository
+import hackatum.munichpulse.mvp.data.repository.SettingsRepository
+import hackatum.munichpulse.mvp.ui.ProvideAppStrings
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryGreen,
@@ -24,7 +25,7 @@ private val DarkColorScheme = darkColorScheme(
 fun UrbanPulseTheme(
     content: @Composable () -> Unit
 ) {
-    val isDarkMode by hackatum.munichpulse.mvp.domain.SettingsRepository.isDarkMode.collectAsState(initial = true)
+    val isDarkMode by SettingsRepository.isDarkMode.collectAsState(initial = true)
     
     // For now, we only have a Dark Color Scheme defined. 
     // If Light Mode is requested, we should define a LightColorScheme.
@@ -32,21 +33,24 @@ fun UrbanPulseTheme(
     
     val colorScheme = if (isDarkMode) DarkColorScheme else LightColorScheme
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        content = content
-    )
+    ProvideAppStrings {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            content = content
+        )
+    }
 }
 
 private val LightColorScheme = androidx.compose.material3.lightColorScheme(
     primary = PrimaryGreen,
     onPrimary = androidx.compose.ui.graphics.Color.White,
-    background = androidx.compose.ui.graphics.Color(0xFFF5F5F5),
-    onBackground = androidx.compose.ui.graphics.Color(0xFF121212),
+    background = androidx.compose.ui.graphics.Color(0xFFF0F2F5), // Slightly off-white for better contrast
+    onBackground = androidx.compose.ui.graphics.Color(0xFF1A1C1E),
     surface = androidx.compose.ui.graphics.Color.White,
-    onSurface = androidx.compose.ui.graphics.Color(0xFF121212),
-    surfaceVariant = androidx.compose.ui.graphics.Color(0xFFE0E0E0),
-    onSurfaceVariant = androidx.compose.ui.graphics.Color(0xFF757575),
-    secondary = androidx.compose.ui.graphics.Color(0xFF757575),
+    onSurface = androidx.compose.ui.graphics.Color(0xFF1A1C1E),
+    surfaceVariant = androidx.compose.ui.graphics.Color(0xFFE1E3E6),
+    onSurfaceVariant = androidx.compose.ui.graphics.Color(0xFF44474E),
+    secondary = androidx.compose.ui.graphics.Color(0xFF535F70),
     onSecondary = androidx.compose.ui.graphics.Color.White,
+    outline = androidx.compose.ui.graphics.Color(0xFF74777F)
 )

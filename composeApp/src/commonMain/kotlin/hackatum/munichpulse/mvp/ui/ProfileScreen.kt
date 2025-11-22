@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Switch
@@ -25,19 +26,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import hackatum.munichpulse.mvp.domain.LogbookEntry
-import hackatum.munichpulse.mvp.domain.MockUserRepository
+import hackatum.munichpulse.mvp.data.model.LogbookEntry
+import hackatum.munichpulse.mvp.ui.theme.PrimaryGreen
+
+import hackatum.munichpulse.mvp.viewmodel.ProfileViewModel
 
 @Composable
-fun ProfileScreen() {
-    val repository = remember { MockUserRepository() }
-    val user by repository.getCurrentUser().collectAsState(initial = null)
-    val logbookEntries by repository.getLogbookEntries().collectAsState(initial = emptyList())
+fun ProfileScreen(
+    viewModel: ProfileViewModel = androidx.lifecycle.viewmodel.compose.viewModel { ProfileViewModel() }
+) {
+    val user by viewModel.user.collectAsState()
+    val logbookEntries by viewModel.logbookEntries.collectAsState()
+    val strings = LocalAppStrings.current
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkBackground)
+            .background(MaterialTheme.colorScheme.background)
             .padding(bottom = 80.dp)
     ) {
         item {
@@ -45,13 +50,13 @@ fun ProfileScreen() {
         }
         
         item {
-            SettingsSection()
+            SettingsSection(viewModel)
         }
 
         item {
             Text(
-                "Logbook",
-                color = TextPrimary,
+                strings.logbookTitle,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(16.dp)
@@ -64,14 +69,15 @@ fun ProfileScreen() {
 }
 
 @Composable
-fun SettingsSection() {
-    val isDarkMode by hackatum.munichpulse.mvp.domain.SettingsRepository.isDarkMode.collectAsState(initial = true)
-    val language by hackatum.munichpulse.mvp.domain.SettingsRepository.language.collectAsState(initial = "English")
+fun SettingsSection(viewModel: ProfileViewModel) {
+    val isDarkMode by viewModel.isDarkMode.collectAsState()
+    val language by viewModel.language.collectAsState()
+    val strings = LocalAppStrings.current
 
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
-            "Settings",
-            color = TextPrimary,
+            strings.settingsTitle,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -83,41 +89,40 @@ fun SettingsSection() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Dark Mode", color = TextPrimary, fontSize = 16.sp)
+            Text(strings.darkModeLabel, color = MaterialTheme.colorScheme.onBackground, fontSize = 16.sp)
             Switch(
                 checked = isDarkMode,
-                onCheckedChange = { hackatum.munichpulse.mvp.domain.SettingsRepository.setDarkMode(it) },
+                onCheckedChange = { viewModel.setDarkMode(it) },
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = DarkBackground,
+                    checkedThumbColor = MaterialTheme.colorScheme.surface,
                     checkedTrackColor = PrimaryGreen,
-                    uncheckedThumbColor = TextSecondary,
-                    uncheckedTrackColor = DarkBorder
+                    uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                 )
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Language Selection (Simple Toggle for MVP)
+        // Language Selection
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Language", color = TextPrimary, fontSize = 16.sp)
+            Text(strings.languageLabel, color = MaterialTheme.colorScheme.onBackground, fontSize = 16.sp)
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(language, color = TextSecondary, fontSize = 14.sp, modifier = Modifier.padding(end = 8.dp))
-                // Simple toggle for demo purposes
+                Text(language, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp, modifier = Modifier.padding(end = 8.dp))
                 Switch(
                     checked = language == "German",
                     onCheckedChange = { 
-                        hackatum.munichpulse.mvp.domain.SettingsRepository.setLanguage(if (it) "German" else "English") 
+                        viewModel.setLanguage(if (it) "German" else "English") 
                     },
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = DarkBackground,
+                        checkedThumbColor = MaterialTheme.colorScheme.surface,
                         checkedTrackColor = PrimaryGreen,
-                        uncheckedThumbColor = TextSecondary,
-                        uncheckedTrackColor = DarkBorder
+                        uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        uncheckedTrackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                     )
                 )
             }
@@ -127,18 +132,19 @@ fun SettingsSection() {
 
 @Composable
 fun ProfileHeader(name: String, avatarUrl: String?) {
-    Column(modifier = Modifier.fillMaxWidth().background(DarkBackground)) {
+    val strings = LocalAppStrings.current
+    Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)) {
         // Top Bar
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { /* Back */ }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onBackground)
             }
             Text(
-                "Profile",
-                color = TextPrimary,
+                strings.profileTab,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f),
@@ -159,9 +165,9 @@ fun ProfileHeader(name: String, avatarUrl: String?) {
                 modifier = Modifier.size(128.dp).clip(CircleShape)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Callsign: $name", color = TextPrimary, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-            Text("Local", color = TextSecondary, fontSize = 16.sp)
-            Text("Joined 2022", color = TextSecondary, fontSize = 16.sp)
+            Text("Callsign: $name", color = MaterialTheme.colorScheme.onBackground, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text("Local", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
+            Text("Joined 2022", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
         }
     }
 }
@@ -171,16 +177,16 @@ fun LogbookItem(entry: LogbookEntry) {
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         // Timeline Line
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(40.dp)) {
-            Icon(Icons.Default.LocationOn, contentDescription = null, tint = TextPrimary)
-            Box(modifier = Modifier.width(2.dp).height(40.dp).background(DarkBorder))
+            Icon(Icons.Default.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
+            Box(modifier = Modifier.width(2.dp).height(40.dp).background(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)))
         }
         
         // Content
         Column(modifier = Modifier.padding(bottom = 24.dp).weight(1f)) {
-            Text(entry.locationName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+            Text(entry.locationName, color = MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = FontWeight.Medium)
             Text(
                 "Distance Traveled: ${entry.distanceTraveled} km | Crowd Contribution: ${entry.crowdContribution}",
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp
             )
         }

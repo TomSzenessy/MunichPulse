@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,21 +24,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import hackatum.munichpulse.mvp.domain.Event
-import hackatum.munichpulse.mvp.domain.MockEventRepository
+import hackatum.munichpulse.mvp.data.model.Event
+import hackatum.munichpulse.mvp.ui.theme.PrimaryGreen
+import hackatum.munichpulse.mvp.ui.theme.RedStatus
+import hackatum.munichpulse.mvp.ui.theme.YellowStatus
+import hackatum.munichpulse.mvp.viewmodel.HomeViewModel
 
 @Composable
-fun HomeScreen() {
-    val repository = remember { MockEventRepository() }
-    val trendingEvents by repository.getTrendingEvents().collectAsState(initial = emptyList())
-    val nearbyEvents by repository.getNearbyEvents().collectAsState(initial = emptyList())
-    val allEvents by repository.getAllEvents().collectAsState(initial = emptyList())
+fun HomeScreen(
+    viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel { HomeViewModel() }
+) {
+    val trendingEvents by viewModel.trendingEvents.collectAsState()
+    val nearbyEvents by viewModel.nearbyEvents.collectAsState()
+    val allEvents by viewModel.allEvents.collectAsState()
+    val strings = LocalAppStrings.current
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkBackground)
-            .padding(bottom = 80.dp) // Space for bottom nav
+            .background(MaterialTheme.colorScheme.background)
     ) {
         item {
             SearchBar()
@@ -83,20 +88,21 @@ fun HomeScreen() {
 
 @Composable
 fun SearchBar() {
+    val strings = LocalAppStrings.current
     Box(modifier = Modifier.padding(16.dp).padding(top = 16.dp)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp)
-                .background(DarkSurface, RoundedCornerShape(12.dp))
-                .border(1.dp, DarkBorder, RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Icon would go here, using text for now or vector if available
-            Text("🔍", color = TextSecondary)
+            Text("🔍", color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Search for events or places", color = TextSecondary)
+            Text(strings.searchPlaceholder, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
@@ -105,7 +111,7 @@ fun SearchBar() {
 fun SectionHeader(title: String) {
     Text(
         text = title,
-        color = TextPrimary,
+        color = MaterialTheme.colorScheme.onBackground,
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
@@ -118,8 +124,8 @@ fun TrendingEventCard(event: Event) {
         modifier = Modifier
             .width(280.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(DarkSurface)
-            .border(1.dp, DarkBorder, RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
     ) {
         Box(modifier = Modifier.height(160.dp)) {
             AsyncImage(
@@ -138,8 +144,8 @@ fun TrendingEventCard(event: Event) {
                     .align(Alignment.BottomStart)
                     .padding(16.dp)
             ) {
-                Text(event.title, color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                Text(event.location, color = TextSecondary, fontSize = 14.sp)
+                Text(event.title, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text(event.location, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                 FullnessIndicator(event.fullnessPercentage)
             }
         }
@@ -152,8 +158,8 @@ fun NearbyEventCard(event: Event) {
         modifier = Modifier
             .width(160.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(DarkSurface)
-            .border(1.dp, DarkBorder, RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
     ) {
         AsyncImage(
             model = event.imageUrl,
@@ -162,8 +168,8 @@ fun NearbyEventCard(event: Event) {
             modifier = Modifier.height(112.dp).fillMaxWidth()
         )
         Column(modifier = Modifier.padding(12.dp)) {
-            Text(event.title, color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp, maxLines = 1)
-            Text(event.location, color = TextSecondary, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
+            Text(event.title, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp, maxLines = 1)
+            Text(event.location, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
             Spacer(modifier = Modifier.height(8.dp))
             FullnessIndicator(event.fullnessPercentage, small = true)
         }
@@ -175,8 +181,8 @@ fun DiscoverEventCard(event: Event) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(DarkSurface, RoundedCornerShape(12.dp))
-            .border(1.dp, DarkBorder, RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -190,8 +196,8 @@ fun DiscoverEventCard(event: Event) {
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(event.title, color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text(event.location, color = TextSecondary, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp))
+            Text(event.title, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(event.location, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp))
             Spacer(modifier = Modifier.height(8.dp))
             FullnessIndicator(event.fullnessPercentage)
         }
@@ -214,13 +220,13 @@ fun FullnessIndicator(percentage: Int, small: Boolean = false) {
         Spacer(modifier = Modifier.width(if (small) 4.dp else 6.dp))
         Text(
             "$percentage%",
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = if (small) 12.sp else 14.sp,
             fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
         )
         Text(
             " full",
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = if (small) 12.sp else 14.sp
         )
     }

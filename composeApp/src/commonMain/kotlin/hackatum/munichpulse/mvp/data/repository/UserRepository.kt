@@ -1,10 +1,22 @@
-package hackatum.munichpulse.mvp.domain
+package hackatum.munichpulse.mvp.data.repository
 
+import hackatum.munichpulse.mvp.data.model.LogbookEntry
+import hackatum.munichpulse.mvp.data.model.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
+/**
+ * Repository interface for accessing user data.
+ */
 interface UserRepository {
+    /**
+     * Returns a flow of the current user.
+     */
     fun getCurrentUser(): Flow<User>
+    
+    /**
+     * Returns a flow of logbook entries for the user.
+     */
     fun getLogbookEntries(): Flow<List<LogbookEntry>>
 }
 
@@ -23,5 +35,5 @@ class MockUserRepository : UserRepository {
     )
 
     override fun getCurrentUser(): Flow<User> = flowOf(currentUser)
-    override fun getLogbookEntries(): Flow<List<LogbookEntry>> = flowOf(logbookEntries)
+    override fun getLogbookEntries(): Flow<List<LogbookEntry>> = flowOf<List<LogbookEntry>>(logbookEntries)
 }
