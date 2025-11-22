@@ -51,11 +51,11 @@ graph TD
     HomeVM -->|Get Events| EventRepo
     MapVM -->|Map State| EventRepo
     GroupVM -->|Get Groups/Chat| GroupRepo
-    ProfileVM -->|Get User/Settings| UserRepo & SettingsRepo
+    ProfileVM -->|Get User/Settings| Firebase Interface & SettingsRepo
 
     EventRepo -->|Fetch| Mock
     GroupRepo -->|Read/Write| LocalDB
-    UserRepo -->|Fetch| Mock
+    UserRepo -->|Fetch| (unused)
     SettingsRepo -->|Read/Write| Prefs
 ```
 
@@ -86,7 +86,7 @@ ViewModels are responsible for preparing data for the UI and handling user inter
 *   **`HomeViewModel`**: Exposes `trendingEvents`, `nearbyEvents`, and `allEvents` by collecting flows from `EventRepository`.
 *   **`MapViewModel`**: Manages `MapUiState` (search query, selected filter) and coordinates with the map component.
 *   **`GroupViewModel`**: Manages `GroupUiState` (selected group) and exposes the list of groups from `GroupRepository`. Handles sending messages.
-*   **`ProfileViewModel`**: Exposes `user` data, `logbookEntries`, and settings (`isDarkMode`, `language`). Bridges UI switches to `SettingsRepository`.
+*   **`ProfileViewModel`**: Exposes Firebase-backed `user` data and settings (`isDarkMode`, `language`). Bridges UI switches to `SettingsRepository`.
 
 ### 2.3 Data Layer (Model)
 **Location**: `hackatum.munichpulse.data`
@@ -98,7 +98,7 @@ Repositories are the single source of truth for data.
 
 *   **`EventRepository`**: Interface for fetching events. Currently implemented by `MockEventRepository` which provides sample data.
 *   **`GroupRepository`**: Singleton object managing groups and chat messages. It uses `SQLDelight` to persist groups, members, and messages locally, enabling offline support.
-*   **`UserRepository`**: Interface for user data. Implemented by `MockUserRepository`.
+*   **`UserRepository`**: Interface for user data (kept for potential future use). No mock implementation is used; `ProfileViewModel` loads user data directly from Firebase.
 *   **`SettingsRepository`**: Singleton object managing app preferences (Dark Mode, Language) using `MultiplatformSettings`.
 
 #### Data Sources
