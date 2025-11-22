@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+
+    id("com.google.gms.google-services")
 }
 
 kotlin {
@@ -22,16 +24,20 @@ kotlin {
         binaries.executable()
     }
     
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs {
+//        browser()
+//        binaries.executable()
+//    }
     
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
+            // Use explicit versions for Firebase Android SDKs within KMP androidMain to avoid BOM issues
+            implementation("com.google.firebase:firebase-auth-ktx:23.0.0")
+            implementation("com.google.firebase:firebase-firestore-ktx:25.0.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -49,11 +55,15 @@ kotlin {
             implementation(libs.coil.network.ktor)
             implementation(libs.ktor.client.core)
             implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.firebase.auth)
-            implementation(libs.firebase.firestore)
+
+            implementation("dev.gitlive:firebase-firestore:2.4.0") // example
+            implementation("dev.gitlive:firebase-auth:2.4.0")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+        jsMain.dependencies {
+            implementation(npm("firebase", "11.0.0")) // Firebase JS SDK
         }
     }
 }
@@ -88,4 +98,3 @@ android {
 dependencies {
     debugImplementation(compose.uiTooling)
 }
-

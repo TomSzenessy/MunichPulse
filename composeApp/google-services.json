@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "2145662120",
+    "project_id": "munichpulse-53738",
+    "storage_bucket": "munichpulse-53738.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2145662120:android:b1a3774367cb1c87ee7e9d",
+        "android_client_info": {
+          "package_name": "hackatum.munichpulse.mvp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDicKumHyjsuKBmMYofazibrFIWsHcHKJs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
