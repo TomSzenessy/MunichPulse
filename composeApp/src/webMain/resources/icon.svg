@@ -1,0 +1,29 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: DarkBackground -->
+  <rect width="512" height="512" rx="120" fill="#1a2310"/>
+  
+  <!-- Main Icon Group -->
+  <g transform="translate(0, 20)">
+    <!-- Location Pin Shape -->
+    <!-- Fill: DarkSurface, Stroke: PrimaryGreen -->
+    <path d="M256 420C256 420 106 270 106 165C106 82.1573 173.157 15 256 15C338.843 15 406 82.1573 406 165C406 270 256 420 256 420Z" 
+          fill="#263418" 
+          stroke="#80f20d" 
+          stroke-width="24" 
+          stroke-linejoin="round"/>
+
+    <!-- Cute Face Features (Centered & Lowered for Cuteness) -->
+    
+    <!-- Eyes (Dark, closer together, and lower) -->
+    <circle cx="200" cy="160" r="25" fill="#111111"/>
+    <circle cx="312" cy="160" r="25" fill="#111111"/>
+    
+    <!-- Smile (Small, simple curve, closer to eyes) -->
+    <path d="M236 205 Q256 225 276 205"
+      
+          stroke="#111111" 
+          stroke-width="16" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+  </g>
+</svg>

@@ -156,34 +156,19 @@ fun LoginScreen(
                         )
                     }
 
-                    // Google Login Button
-                    Button(
-                        onClick = { 
-                            viewModel.login("Google User", uiState.isLocal) { success ->
-                                if (success) onLoginSuccess("Google User", uiState.isLocal)
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        // Placeholder for Google Icon
-                        Box(modifier = Modifier.size(24.dp).background(Color.Red, CircleShape)) 
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = strings.loginGoogle,
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                    }
+                    // 1. Enter Name
+                    OutlinedTextField(
+                        value = uiState.name,
+                        onValueChange = { viewModel.updateName(it) },
+                        label = { Text(strings.loginNameLabel) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true
+                    )
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Local Toggle (Segmented Control)
+                    // 2. Local / Newby Selection
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -237,7 +222,34 @@ fun LoginScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Divider
+                    // 3. Sign in with Google
+                    Button(
+                        onClick = { 
+                            viewModel.login("Google User", uiState.isLocal) { success ->
+                                if (success) onLoginSuccess("Google User", uiState.isLocal)
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        // Placeholder for Google Icon
+                        Box(modifier = Modifier.size(24.dp).background(Color.Red, CircleShape)) 
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = strings.loginGoogle,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // 4. Divider
                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                         HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
                         Text(
@@ -250,7 +262,7 @@ fun LoginScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Guest Login Button (Text Button style but prominent)
+                    // 5. Continue as Guest
                     OutlinedButton(
                         onClick = { 
                             viewModel.login("Guest", false) { success ->
@@ -284,6 +296,7 @@ fun LoginScreen(
 @Composable
 fun LanguageToggle() {
     val language by SettingsRepository.language.collectAsState()
+    val strings = LocalAppStrings.current
     
     Row(
         modifier = Modifier
@@ -303,7 +316,7 @@ fun LanguageToggle() {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = if (language == "English") "EN" else "DE",
+            text = strings.languageButton,
             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
         )
     }
