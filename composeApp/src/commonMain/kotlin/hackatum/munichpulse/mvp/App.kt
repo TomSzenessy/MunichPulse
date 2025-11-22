@@ -1,11 +1,14 @@
 package hackatum.munichpulse.mvp
 
+import LoadEventMockData
+import LoadEventMockData.Companion.loadEventsFromResources
 import androidx.compose.runtime.*
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.repository.GroupRepository
 import hackatum.munichpulse.mvp.ui.EventDetailScreen
 import hackatum.munichpulse.mvp.ui.LoginScreen
@@ -18,6 +21,12 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun App() {
+
+    suspend fun startUp() {
+        val List : List<Event> = loadEventsFromResources("composeResources/files/mock_events_two.json")
+        println(List)
+    }
+
     LaunchedEffect(Unit) {
         // Initialize repositories
         GroupRepository.init()

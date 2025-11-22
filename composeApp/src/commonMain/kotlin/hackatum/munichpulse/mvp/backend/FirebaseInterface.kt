@@ -5,7 +5,9 @@ import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.auth.AuthCredential
 import dev.gitlive.firebase.firestore.firestore
+import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.model.User
+import kotlin.String
 
 
 const val USER_COLLECTION: String = "users"
@@ -24,7 +26,9 @@ const val EVENT_GROUPS_SUB_COLLECTION: String = "groups"
 const val EVENT_GROUPS_USERS_LIST: String = "users"
 const val EVENT_TRACKS_SUB_COLLECTION: String = "tracks"
 const val EVENT_TRACK_POSITION_PARAM: String = "gps_coords"
-
+const val EVENT_IMAGE_URL_PARAM: String = "image_url"
+const val EVENT_FULLNESS_PERCENTAGE_PARAM: String = "fullness_percentage"
+const val EVENT_IS_TRENDING_PARAM: String = "is_trending"
 
 
 class FirebaseInterface {
@@ -179,5 +183,34 @@ class FirebaseInterface {
     /** Convenience function to add a single user to a group. */
     suspend fun addUserToGroup(eventId: String, groupId: String, user: User) {
         addUsersToGroup(eventId, groupId, listOf(user))
+    }
+
+    // Add list of Events to Firebase Database
+    suspend fun addEvents(eventList: List<Event>) {
+        val db = Firebase.firestore
+
+        for (event in eventList) {
+            db.collection(EVENT_COLLECTION).add(event)
+        }
+    }
+
+    // return all events in the database
+    suspend fun getAllEvents(): List<Event> {
+        val db = Firebase.firestore
+
+        val collection = db.collection(EVENT_COLLECTION).get()
+        val eventList = collection.documents.map { doc ->
+
+            Event(
+                id = doc.id,
+                title = doc.get<String>(EVENT_NAME_PARAM),
+                location = doc.get<String>(EVENT_LOCATION_PARAM),
+                imageUrl = doc.get<String>(EVENT_IMAGE_URL_PARAM),
+                fullnessPercentage = doc.get<Int>(EVENT_FULLNESS_PERCENTAGE_PARAM),
+                isTrending = doc.get<Boolean>(EVENT_IS_TRENDING_PARAM)
+            )
+        }
+
+        return eventList
     }
 }
