@@ -3,6 +3,7 @@ package hackatum.munichpulse.mvp.ui
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import hackatum.munichpulse.mvp.model.Location
+import hackatum.munichpulse.mvp.ui.map.MapController
 import hackatum.munichpulse.mvp.ui.map.MapRenderer
 import hackatum.munichpulse.mvp.ui.map.WebMapRenderer
 import hackatum.munichpulse.mvp.viewmodel.MapEvent
@@ -31,6 +32,13 @@ class JsMapController : MapController {
         map?.flyTo(json(
             "center" to arrayOf(location.longitude, location.latitude),
             "zoom" to 14
+        ))
+    }
+
+    override fun moveTo(location: Location, zoom: Double) {
+        map?.flyTo(json(
+            "center" to arrayOf(location.longitude, location.latitude),
+            "zoom" to zoom
         ))
     }
 }

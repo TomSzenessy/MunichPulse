@@ -21,11 +21,20 @@ class WebMapRenderer : MapRenderer {
     @Composable
     override fun renderMap(
         state: MapState,
+        mapController: MapController,
         onMarkerClick: (String) -> Unit,
         modifier: Modifier
     ) {
         val containerId = remember { "mapbox-container-${kotlin.random.Random.nextInt()}" }
         val mapInstance = remember { mutableStateOf<MapboxGl.Map?>(null) }
+        
+        // Link controller to map
+        LaunchedEffect(mapInstance.value) {
+            if (mapController is hackatum.munichpulse.mvp.ui.JsMapController) {
+                mapController.map = mapInstance.value
+            }
+        }
+
         val markerManager = remember { mutableStateOf<WebMarkerManager?>(null) }
         val previousState = remember { mutableStateOf<MapState?>(null) }
         

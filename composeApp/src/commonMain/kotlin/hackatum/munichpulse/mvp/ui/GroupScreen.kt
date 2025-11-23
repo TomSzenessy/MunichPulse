@@ -311,7 +311,7 @@ fun ChatBubble(message: ChatMessage, isMe: Boolean) {
                     bottomEnd = if (isMe) 0.dp else 16.dp
                 ))
                 .background(if (isMe) PrimaryGreen else MaterialTheme.colorScheme.surface)
-                .padding(12.dp)
+                .padding(16.dp)
         ) {
             Text(
                 text = message.text,

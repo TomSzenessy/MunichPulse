@@ -189,7 +189,7 @@ actual class GpsTracker(
         startTracking()
         if (lastTracking != null) {
             val returnVal = hackatum.munichpulse.mvp.model.Location(
-                lastTracking!!.latitude, lastTracking!!.latitude
+                lastTracking!!.latitude, lastTracking!!.longitude
             )
             print("Coords: " + returnVal)
             // stopTracking()

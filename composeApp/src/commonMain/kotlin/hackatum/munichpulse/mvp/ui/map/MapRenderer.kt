@@ -14,6 +14,7 @@ interface MapRenderer {
     @Composable
     fun renderMap(
         state: MapState,
+        mapController: MapController,
         onMarkerClick: (String) -> Unit,
         modifier: androidx.compose.ui.Modifier
     )

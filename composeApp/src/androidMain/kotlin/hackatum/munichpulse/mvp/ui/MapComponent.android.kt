@@ -13,10 +13,21 @@ import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportS
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import hackatum.munichpulse.mvp.model.Location
 import hackatum.munichpulse.mvp.ui.map.AndroidMapRenderer
+import hackatum.munichpulse.mvp.ui.map.MapController
 import hackatum.munichpulse.mvp.ui.map.MapRenderer
 import hackatum.munichpulse.mvp.viewmodel.MapEvent
 
 class AndroidMapController(val viewportState: MapViewportState) : MapController {
+    override fun moveTo(location: Location, zoom: Double) {
+        viewportState.flyTo(
+            CameraOptions.Builder()
+                .center(Point.fromLngLat(location.longitude, location.latitude))
+                .zoom(zoom)
+                .build(),
+            MapAnimationOptions.Builder().duration(300).build()
+        )
+    }
+
     override fun zoomIn() {
         viewportState.flyTo(
             CameraOptions.Builder().zoom(viewportState.cameraState.zoom + 1.0).build(),

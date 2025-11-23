@@ -19,12 +19,14 @@ if (localPropertiesFile.exists()) {
 }
 
 val mapboxToken = localProperties.getProperty("MAPBOX_PUBLIC_TOKEN") ?: ""
+val googleWebClientId = localProperties.getProperty("GOOGLE_WEB_CLIENT_ID") ?: ""
 
 // Task to generate Secrets.kt for JS
 tasks.register("generateJsSecrets") {
     val outputDir = layout.buildDirectory.dir("generated/js")
     outputs.dir(outputDir)
     val token = mapboxToken
+    val clientId = googleWebClientId
     
     doLast {
         val file = outputDir.get().file("hackatum/munichpulse/mvp/js/Secrets.kt").asFile
@@ -34,6 +36,7 @@ tasks.register("generateJsSecrets") {
             
             object Secrets {
                 const val MAPBOX_PUBLIC_TOKEN = "$token"
+                const val GOOGLE_WEB_CLIENT_ID = "$clientId"
             }
         """.trimIndent())
     }

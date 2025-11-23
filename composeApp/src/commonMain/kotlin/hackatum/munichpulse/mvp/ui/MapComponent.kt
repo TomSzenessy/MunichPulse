@@ -4,15 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import hackatum.munichpulse.mvp.model.Location
+import hackatum.munichpulse.mvp.ui.map.MapController
 import hackatum.munichpulse.mvp.ui.map.MapRenderer
 import hackatum.munichpulse.mvp.ui.map.MapState
 import hackatum.munichpulse.mvp.viewmodel.MapEvent
-
-interface MapController {
-    fun zoomIn()
-    fun zoomOut()
-    fun recenter(location: Location)
-}
 
 @Composable
 expect fun rememberMapController(): MapController
@@ -41,6 +36,7 @@ fun MapComponent(
     
     renderer.renderMap(
         state = mapState,
+        mapController = mapController,
         onMarkerClick = onNavigateToEvent,
         modifier = modifier
     )

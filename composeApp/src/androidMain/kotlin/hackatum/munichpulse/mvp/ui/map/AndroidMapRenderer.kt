@@ -22,6 +22,7 @@ class AndroidMapRenderer : MapRenderer {
     @Composable
     override fun renderMap(
         state: MapState,
+        mapController: MapController,
         onMarkerClick: (String) -> Unit,
         modifier: Modifier
     ) {
@@ -29,7 +30,12 @@ class AndroidMapRenderer : MapRenderer {
         val markerManager = remember { AndroidMarkerManager() }
         
         // Create viewport state for camera control
-        val viewportState = rememberMapViewportState()
+        val viewportState = if (mapController is hackatum.munichpulse.mvp.ui.AndroidMapController) {
+            mapController.viewportState
+        } else {
+            rememberMapViewportState()
+        }
+
         
         // Apply camera position changes
         state.cameraPosition?.let { camera ->
