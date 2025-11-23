@@ -97,6 +97,28 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+
+    /**
+     * Sign in using email and password. Works for Android and Web.
+     */
+    fun signInWithEmailPassword(
+        email: String,
+        password: String,
+        onResult: (Boolean) -> Unit
+    ) {
+        setLoading(true)
+        viewModelScope.launch {
+            try {
+                ViewController.signInWithEmailPassword(email, password, uiState.value.name, uiState.value.isLocal)
+                onResult(true)
+                ViewController.closeSignInScreen()
+            } catch (_: Throwable) {
+                onResult(false)
+            } finally {
+                setLoading(false)
+            }
+        }
+    }
 }
 
 fun logIn(name: String, isLocal: Boolean) {
