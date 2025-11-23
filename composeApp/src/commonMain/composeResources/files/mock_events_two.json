@@ -12,7 +12,7 @@
     "id": "2",
     "title": "HackaTUM Afterparty",
     "location": "TUM CIT, Garching",
-    "imageUrl": "https://unsplash.com/de/fotos/leute-die-nachts-konzerte-sehen-UV3GmG_HEqI",
+    "imageUrl": "https://images.unsplash.com/photo-1630395822970-acd6a691d97e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 85,
     "isTrending": true,
     "startTime": "2025-11-23T20:00:00+01:00"
@@ -21,7 +21,7 @@
     "id": "3",
     "title": "Isar Chill & Grill",
     "location": "Flaucher, München",
-    "imageUrl": "https://unsplash.com/de/fotos/person-die-neben-brennenden-kohlen-im-grauen-grill-sitzt-NNTBmq-3las",
+    "imageUrl": "https://images.unsplash.com/photo-1560982614-891b4568c149?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 40,
     "isTrending": false,
     "startTime": "2026-06-21T16:00:00+01:00"
@@ -30,7 +30,7 @@
     "id": "4",
     "title": "Tollwood Winterfestival",
     "location": "Theresienwiese",
-    "imageUrl": "https://unsplash.com/de/fotos/menschen-im-vergnugungspark-wahrend-der-nacht-Tr_R45Qz7ko",
+    "imageUrl": "https://images.unsplash.com/photo-1576201018761-8952329c07df?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 75,
     "isTrending": true,
     "startTime": "2025-11-25T14:00:00+01:00"
@@ -39,7 +39,7 @@
     "id": "5",
     "title": "Open AI Guest Lecture",
     "location": "Audimax, Stammgelände",
-    "imageUrl": "https://unsplash.com/de/fotos/ein-quadratisches-objekt-mit-einem-knoten-darauf-fluoEjpdj60",
+    "imageUrl": "https://images.unsplash.com/photo-1684487747720-1ba29cda82f8?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 100,
     "isTrending": false,
     "startTime": "2025-12-08T18:00:00+01:00"
@@ -48,7 +48,7 @@
     "id": "6",
     "title": "Münchner Christkindlmarkt",
     "location": "Marienplatz",
-    "imageUrl": "https://unsplash.com/de/fotos/gelbes-und-blaues-riesenrad-LVyllusSW8w",
+    "imageUrl": "https://images.unsplash.com/photo-1608859523369-6906c1a18992?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 95,
     "isTrending": true,
     "startTime": "2025-11-24T10:00:00+01:00"
@@ -57,7 +57,7 @@
     "id": "7",
     "title": "Die Legende der Titanic (Ausstellung)",
     "location": "Alte Paketposthalle",
-    "imageUrl": "https://unsplash.com/de/fotos/ein-modell-eines-schiffes-mit-eisbergen-im-hintergrund-TQAWPDbuwrc",
+    "imageUrl": "https://images.unsplash.com/photo-1654170816607-f355d5cd5619?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 60,
     "isTrending": false,
     "startTime": "2025-11-25T10:00:00+01:00"
@@ -66,7 +66,7 @@
     "id": "8",
     "title": "Krampuslauf in der Altstadt",
     "location": "Innenstadt/Fußgängerzone",
-    "imageUrl": "https://unsplash.com/de/fotos/nahaufnahme-eines-hundes-in-einem-dunklen-raum-YIfXjFkFdN0",
+    "imageUrl": "https://images.unsplash.com/photo-1648834118219-b9de77f6a8c6?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 80,
     "isTrending": true,
     "startTime": "2025-12-14T15:00:00+01:00"
@@ -84,7 +84,7 @@
     "id": "10",
     "title": "Heim+Handwerk Messe",
     "location": "Messe München",
-    "imageUrl": "https://unsplash.com/de/fotos/zangen-und-perlen-organizer-mit-schwarzem-und-rotem-griff-4Z-bBhehYs4",
+    "imageUrl": "https://images.unsplash.com/photo-1733779211540-9315c9b63a33?q=80&w=674&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 70,
     "isTrending": true,
     "startTime": "2026-11-11T09:30:00+01:00"

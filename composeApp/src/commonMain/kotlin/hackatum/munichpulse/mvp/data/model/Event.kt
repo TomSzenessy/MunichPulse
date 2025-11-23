@@ -13,7 +13,7 @@ data class Event(
     val imageUrl: String,
     val fullnessPercentage: Int,
     val isTrending: Boolean = false,
-    val startTime: Int
+    val startTime: String
 )
 
 object eventFuncs {

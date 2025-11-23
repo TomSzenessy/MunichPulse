@@ -267,7 +267,7 @@ class FirebaseInterface {
                     imageUrl = doc.get<String>(EVENT_IMAGE_URL_PARAM),
                     fullnessPercentage = doc.get<Int>(EVENT_FULLNESS_PERCENTAGE_PARAM),
                     isTrending = doc.get<Boolean>(EVENT_IS_TRENDING_PARAM),
-                    startTime = doc.get<Int>(EVENT_START_DATE_PARAM)
+                    startTime = doc.get<String>(EVENT_START_DATE_PARAM)
                 )
             }
             catch (e: Exception) {
