@@ -3,80 +3,90 @@
     "id": "1",
     "title": "Winterball 2025",
     "location": "MI Magistrale, Garching",
-    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/1511323927359954310_0",
+    "imageUrl": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.s_3B0hOMj3tu8ib0UYxrmQHaEK%3Fpid%3DApi&f=1&ipt=c5e061c2135d1dfffe2f19966ac22332fc0e04300616bed53d4aa8a60f8c7348&ipo=images",
     "fullnessPercentage": 98,
-    "isTrending": true
+    "isTrending": true,
+    "startTime": "2025-11-27T19:00:00+01:00"
   },
   {
     "id": "2",
     "title": "HackaTUM Afterparty",
     "location": "TUM CIT, Garching",
-    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/737152848660564166_0",
+    "imageUrl": "https://images.unsplash.com/photo-1630395822970-acd6a691d97e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 85,
-    "isTrending": true
+    "isTrending": true,
+    "startTime": "2025-11-23T20:00:00+01:00"
   },
   {
     "id": "3",
     "title": "Isar Chill & Grill",
     "location": "Flaucher, München",
-    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/9715425153936026237_0",
+    "imageUrl": "https://images.unsplash.com/photo-1560982614-891b4568c149?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 40,
-    "isTrending": false
+    "isTrending": false,
+    "startTime": "2026-06-21T16:00:00+01:00"
   },
   {
     "id": "4",
     "title": "Tollwood Winterfestival",
     "location": "Theresienwiese",
-    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/7334899184866955790_0",
+    "imageUrl": "https://images.unsplash.com/photo-1576201018761-8952329c07df?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 75,
-    "isTrending": true
+    "isTrending": true,
+    "startTime": "2025-11-25T14:00:00+01:00"
   },
   {
     "id": "5",
     "title": "Open AI Guest Lecture",
     "location": "Audimax, Stammgelände",
-    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/15514923425854604448_0",
+    "imageUrl": "https://images.unsplash.com/photo-1684487747720-1ba29cda82f8?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 100,
-    "isTrending": false
+    "isTrending": false,
+    "startTime": "2025-12-08T18:00:00+01:00"
   },
   {
     "id": "6",
     "title": "Münchner Christkindlmarkt",
     "location": "Marienplatz",
-    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/16252871267789268851_0",
+    "imageUrl": "https://images.unsplash.com/photo-1608859523369-6906c1a18992?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 95,
-    "isTrending": true
+    "isTrending": true,
+    "startTime": "2025-11-24T10:00:00+01:00"
   },
   {
     "id": "7",
     "title": "Die Legende der Titanic (Ausstellung)",
     "location": "Alte Paketposthalle",
-    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/874473506180416370_0",
+    "imageUrl": "https://images.unsplash.com/photo-1654170816607-f355d5cd5619?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 60,
-    "isTrending": false
+    "isTrending": false,
+    "startTime": "2025-11-25T10:00:00+01:00"
   },
   {
     "id": "8",
     "title": "Krampuslauf in der Altstadt",
     "location": "Innenstadt/Fußgängerzone",
-    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/7022204317713539419_0",
+    "imageUrl": "https://images.unsplash.com/photo-1648834118219-b9de77f6a8c6?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 80,
-    "isTrending": true
+    "isTrending": true,
+    "startTime": "2025-12-14T15:00:00+01:00"
   },
   {
     "id": "9",
     "title": "Residenz Serenade",
     "location": "Hofkapelle der Residenz",
-    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/8113641563080739817_0",
+    "imageUrl": "https://unsplash.com/de/fotos/ein-raum-mit-goldenen-und-grunen-wanden-und-gemalden-an-den-wanden-VHpuiFh0Cc4",
     "fullnessPercentage": 55,
-    "isTrending": false
+    "isTrending": false,
+    "startTime": "2025-11-28T18:30:00+01:00"
   },
   {
     "id": "10",
     "title": "Heim+Handwerk Messe",
     "location": "Messe München",
-    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/15916131819297411069_0",
+    "imageUrl": "https://images.unsplash.com/photo-1733779211540-9315c9b63a33?q=80&w=674&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "fullnessPercentage": 70,
-    "isTrending": true
+    "isTrending": true,
+    "startTime": "2026-11-11T09:30:00+01:00"
   }
 ]
