@@ -141,37 +141,19 @@ fun EventDetailScreen(
                                 }
                             },
                             dismissButton = {
-                                TextButton(onClick = { openLeaveDialog.value = false }) {
-                                    Text(strings.cancel)
+                                TextButton(onClick = { openJoinDialog.value = false }) {
+                                    Text("Cancel")
                                 }
                             }
                         )
                     }
 
-                    if (currentGroup != null) {
-                        // User is in a group
-                        OutlinedButton(
-                            onClick = { openLeaveDialog.value = true },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
-                        ) {
-                            Text(strings.leaveGroup)
-                        }
-                        
-                        Button(
-                            onClick = { currentGroup?.let { onOpenGroup(it.id) } },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(strings.openGroup)
-                        }
-                    } else {
-                        // User is not in a group
-                        Button(
-                            onClick = { openJoinDialog.value = true },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(strings.joinGroup)
-                        }
+
+                    Button(
+                        onClick = { openJoinDialog.value = true },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Join Event")
                     }
                 }
             }

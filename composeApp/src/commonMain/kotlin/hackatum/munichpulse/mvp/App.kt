@@ -9,8 +9,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.firestore.firestore
 import hackatum.munichpulse.mvp.backend.FirebaseInterface
 import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.repository.GroupRepository
