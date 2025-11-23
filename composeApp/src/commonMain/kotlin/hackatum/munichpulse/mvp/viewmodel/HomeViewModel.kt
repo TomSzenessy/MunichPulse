@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.repository.EventRepository
-import hackatum.munichpulse.mvp.data.repository.MockEventRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +17,7 @@ import kotlinx.coroutines.flow.stateIn
  * @property repository The repository to fetch event data from.
  */
 class HomeViewModel(
-    private val repository: EventRepository = MockEventRepository()
+    private val repository: EventRepository = EventRepository()
 ) : ViewModel() {
 
     /**

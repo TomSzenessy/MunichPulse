@@ -3,7 +3,7 @@
     "id": "1",
     "title": "Winterball 2025",
     "location": "MI Magistrale, Garching",
-    "imageUrl": "https://picsum.photos/seed/winterball/600/400",
+    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/1511323927359954310_0",
     "fullnessPercentage": 98,
     "isTrending": true
   },
@@ -11,7 +11,7 @@
     "id": "2",
     "title": "HackaTUM Afterparty",
     "location": "TUM CIT, Garching",
-    "imageUrl": "https://picsum.photos/seed/hackatum/600/400",
+    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/737152848660564166_0",
     "fullnessPercentage": 85,
     "isTrending": true
   },
@@ -19,7 +19,7 @@
     "id": "3",
     "title": "Isar Chill & Grill",
     "location": "Flaucher, München",
-    "imageUrl": "https://picsum.photos/seed/isar/600/400",
+    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/9715425153936026237_0",
     "fullnessPercentage": 40,
     "isTrending": false
   },
@@ -27,7 +27,7 @@
     "id": "4",
     "title": "Tollwood Winterfestival",
     "location": "Theresienwiese",
-    "imageUrl": "https://picsum.photos/seed/tollwood/600/400",
+    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/7334899184866955790_0",
     "fullnessPercentage": 75,
     "isTrending": true
   },
@@ -35,8 +35,48 @@
     "id": "5",
     "title": "Open AI Guest Lecture",
     "location": "Audimax, Stammgelände",
-    "imageUrl": "https://picsum.photos/seed/lecture/600/400",
+    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/15514923425854604448_0",
     "fullnessPercentage": 100,
     "isTrending": false
+  },
+  {
+    "id": "6",
+    "title": "Münchner Christkindlmarkt",
+    "location": "Marienplatz",
+    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/16252871267789268851_0",
+    "fullnessPercentage": 95,
+    "isTrending": true
+  },
+  {
+    "id": "7",
+    "title": "Die Legende der Titanic (Ausstellung)",
+    "location": "Alte Paketposthalle",
+    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/874473506180416370_0",
+    "fullnessPercentage": 60,
+    "isTrending": false
+  },
+  {
+    "id": "8",
+    "title": "Krampuslauf in der Altstadt",
+    "location": "Innenstadt/Fußgängerzone",
+    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/7022204317713539419_0",
+    "fullnessPercentage": 80,
+    "isTrending": true
+  },
+  {
+    "id": "9",
+    "title": "Residenz Serenade",
+    "location": "Hofkapelle der Residenz",
+    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/8113641563080739817_0",
+    "fullnessPercentage": 55,
+    "isTrending": false
+  },
+  {
+    "id": "10",
+    "title": "Heim+Handwerk Messe",
+    "location": "Messe München",
+    "imageUrl": "http://googleusercontent.com/image_collection/image_retrieval/15916131819297411069_0",
+    "fullnessPercentage": 70,
+    "isTrending": true
   }
 ]

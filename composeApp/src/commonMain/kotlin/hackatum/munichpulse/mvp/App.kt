@@ -2,12 +2,14 @@ package hackatum.munichpulse.mvp
 
 import LoadEventMockData
 import LoadEventMockData.Companion.loadEventsFromResources
+import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.*
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import hackatum.munichpulse.mvp.backend.FirebaseInterface
 import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.repository.GroupRepository
 import hackatum.munichpulse.mvp.ui.EventDetailScreen
@@ -20,14 +22,18 @@ import hackatum.munichpulse.mvp.ui.theme.UrbanPulseTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 import hackatum.munichpulse.mvp.data.repository.SettingsRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun App() {
     val isDarkMode by SettingsRepository.isDarkMode.collectAsState()
 
-    suspend fun startUp() {
-        val List : List<Event> = loadEventsFromResources("composeResources/files/mock_events_two.json")
-        println(List)
+    CoroutineScope(Dispatchers.Unconfined).launch {
+        FirebaseInterface.getInstance().addEvents(loadEventsFromResources("files/mock_events_two.json"))
+        print("Baum")
+        println("XKCD" + FirebaseInterface.getInstance().getAllEvents())
     }
 
     LaunchedEffect(Unit) {

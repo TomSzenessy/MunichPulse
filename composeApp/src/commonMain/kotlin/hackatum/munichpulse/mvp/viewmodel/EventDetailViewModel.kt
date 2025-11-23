@@ -5,14 +5,13 @@ import androidx.lifecycle.viewModelScope
 import hackatum.munichpulse.mvp.DataController
 import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.repository.EventRepository
-import hackatum.munichpulse.mvp.data.repository.MockEventRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class EventDetailViewModel(
-    private val repository: EventRepository = MockEventRepository()
+    private val repository: EventRepository = EventRepository()
 ) : ViewModel() {
 
     private val _event = MutableStateFlow<Event?>(null)
