@@ -29,6 +29,7 @@ import hackatum.munichpulse.mvp.ui.theme.PrimaryGreen
 import hackatum.munichpulse.mvp.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
 
+
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel { LoginViewModel() },
@@ -37,6 +38,7 @@ fun LoginScreen(
     val uiState by viewModel.uiState.collectAsState()
     val strings = LocalAppStrings.current
     val scope = rememberCoroutineScope()
+    var loginError by remember { mutableStateOf<String?>(null) }
 
     // --- Firebase / Google Setup ---
     // Handled by GoogleLoginButton
@@ -139,10 +141,20 @@ fun LoginScreen(
                             }
                         },
                         onLoginError = { error ->
-                            // Handle error (e.g. show snackbar)
+                            // Surface the error visibly on screen for Web users
+                            loginError = error
                             println("Login Error: $error")
                         }
                     )
+
+                    if (loginError != null) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = loginError!!,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
