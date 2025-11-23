@@ -6,11 +6,19 @@
 // 4) Consider storing real keys outside of VCS and generating this file at build time if needed.
 
 const firebaseConfig = {
+
     apiKey: "AIzaSyD9EqFdZYATTdkY41UQbJwvCrTsBYASIv4",
+
     authDomain: "munichpulse-53738.firebaseapp.com",
+
     projectId: "munichpulse-53738",
+
     storageBucket: "munichpulse-53738.firebasestorage.app",
+
     messagingSenderId: "2145662120",
+
     appId: "1:2145662120:web:63736dabdff86137ee7e9d",
+
     measurementId: "G-3RYFMJ8MG3"
+
 };

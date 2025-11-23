@@ -22,7 +22,7 @@ const val USER_IS_LOCAL_PARAM: String = "isLocal"
 const val USER_NAME_PARAM: String = "name"
 
 // Toggle to route Firebase SDKs to local emulator. Keep false for production.
-const val USE_FIREBASE_EMULATOR: Boolean = true
+const val USE_FIREBASE_EMULATOR: Boolean = false
 
 // Host to reach the local Emulator Suite from the app runtime.
 const val EMULATOR_IP: String = "131.159.207.110"
@@ -82,6 +82,23 @@ class FirebaseInterface {
 
         }
 
+    }
+
+    /**
+     * Ensure there is a signed-in Firebase user before performing Firestore reads.
+     * If nobody is signed in yet, sign in anonymously. This avoids Firestore
+     * security rule failures like "PERMISSION_DENIED: Missing or insufficient permissions"
+     * when rules require request.auth != null.
+     */
+    private suspend fun ensureAuthenticated() {
+        val auth = Firebase.auth
+        if (auth.currentUser == null) {
+            try {
+                auth.signInAnonymously()
+            } catch (_: Throwable) {
+                // If anonymous sign-in fails, proceed and let the next call surface an error.
+            }
+        }
     }
 
     /**
@@ -159,7 +176,7 @@ class FirebaseInterface {
         if (name != null) {
             try {
                 if (currentUser.displayName != name) {
-                    currentUser.updateProfile(displayName = name, photoUrl = currentUser.photoURL)
+                    currentUser.updateProfile(displayName = name, photoUrl = currentUser.photoURL ?: "")
                 }
             } catch (e: Throwable) {
                 println("Failed to update profile: ${e.message}")
@@ -238,7 +255,8 @@ class FirebaseInterface {
 
     // return all events in the database
     suspend fun getAllEvents(): List<Event> {
-        
+        // Make sure we are authenticated to satisfy common Firestore rules
+        ensureAuthenticated()
         val db = Firebase.firestore
 
         val collection = db.collection(EVENT_COLLECTION).get()
@@ -284,6 +302,8 @@ class FirebaseInterface {
      * irrelevant event documents are not fetched.
      */
     suspend fun getUserEvents(userId: String): List<Event> {
+        // Ensure auth so collection group queries don't fail on rules
+        ensureAuthenticated()
         val db = Firebase.firestore
 
         // Query group memberships across all events via collection group query
