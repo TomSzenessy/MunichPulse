@@ -104,7 +104,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.multiplatform.settings)
             implementation(libs.kotlinx.datetime)
-            // implementation(libs.firebase.firestore) // example
+            implementation(libs.firebase.firestore)
             implementation(libs.firebase.auth)
             implementation(libs.kotlinx.coroutines.core)
         }

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import hackatum.munichpulse.mvp.backend.FirebaseInterface
 import hackatum.munichpulse.mvp.data.model.Group
+import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.model.ChatMessage
 import hackatum.munichpulse.mvp.data.repository.GroupRepository
 import hackatum.munichpulse.mvp.data.model.User
@@ -45,6 +46,7 @@ fun GroupScreen(
 ) {
     val viewModel: GroupViewModel = androidx.lifecycle.viewmodel.compose.viewModel { GroupViewModel() }
     val groups by viewModel.groups.collectAsState()
+    val groupsWithEvents by viewModel.groupsWithEvents.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
     val strings = LocalAppStrings.current
 
@@ -87,12 +89,12 @@ fun GroupScreen(
             }
         )
     } else {
-        GroupList(groups = groups, onGroupClick = { viewModel.selectGroup(it) })
+        GroupList(groupsWithEvents = groupsWithEvents, onGroupClick = { viewModel.selectGroup(it) })
     }
 }
 
 @Composable
-fun GroupList(groups: List<Group>, onGroupClick: (Group) -> Unit) {
+fun GroupList(groupsWithEvents: List<Pair<Group, Event?>>, onGroupClick: (Group) -> Unit) {
     val strings = LocalAppStrings.current
     Column(
         modifier = Modifier
@@ -105,8 +107,8 @@ fun GroupList(groups: List<Group>, onGroupClick: (Group) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
-            items(groups) { group ->
-                GroupCard(group, onClick = { onGroupClick(group) })
+            items(groupsWithEvents) { (group, event) ->
+                GroupCard(group, titleOverride = event?.title, onClick = { onGroupClick(group) })
             }
         }
     }
@@ -154,7 +156,7 @@ fun GroupCard(
     onClick: () -> Unit
 ) {
     // Mock data mapping for display
-    val title = titleOverride ?: if (group.eventId == "1") "Tollwood Summer Festival" else if (group.eventId == "3") "Open Air Kino" else "Unknown Event"
+    val title = titleOverride ?: "Unknown Event"
     val status = statusOverride ?: "Live now"
     val statusColor = statusColorOverride ?: PrimaryGreen
 

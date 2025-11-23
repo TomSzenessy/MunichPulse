@@ -45,14 +45,13 @@ fun EventDetailScreen(
     val currentGroup by viewModel.currentGroupForEvent.collectAsState()
     val strings = LocalAppStrings.current
 
-    // Auto-redirect to group when joined
-    val wasInGroup = remember { mutableStateOf(currentGroup != null) }
+    // Only redirect when explicitly requested (e.g. after clicking join)
+    val shouldRedirect = remember { mutableStateOf(false) }
     LaunchedEffect(currentGroup) {
-        if (!wasInGroup.value && currentGroup != null) {
-            // User just joined a group
+        if (shouldRedirect.value && currentGroup != null) {
             onOpenGroup(currentGroup!!.id)
+            shouldRedirect.value = false
         }
-        wasInGroup.value = currentGroup != null
     }
 
     Scaffold(
@@ -101,6 +100,7 @@ fun EventDetailScreen(
                                     Button(
                                         onClick = {
                                             openJoinDialog.value = false
+                                            shouldRedirect.value = true
                                             viewModel.addUserToEventGroup(eventId)
                                         },
                                         modifier = Modifier.fillMaxWidth()
@@ -109,6 +109,7 @@ fun EventDetailScreen(
                                     OutlinedButton(
                                         onClick = {
                                             openJoinDialog.value = false
+                                            shouldRedirect.value = true
                                             viewModel.addUserToIndividualEventGroup(eventId)
                                         },
                                         modifier = Modifier.fillMaxWidth()
@@ -149,11 +150,31 @@ fun EventDetailScreen(
                     }
 
 
-                    Button(
-                        onClick = { openJoinDialog.value = true },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Join Event")
+                    if (currentGroup == null) {
+                        Button(
+                            onClick = { openJoinDialog.value = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Join Event")
+                        }
+                    } else {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Button(
+                                onClick = { currentGroup?.let { onOpenGroup(it.id) } },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Open Group")
+                            }
+                            OutlinedButton(
+                                onClick = { openLeaveDialog.value = true },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Leave Group")
+                            }
+                        }
                     }
                 }
             }

@@ -4,13 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import hackatum.munichpulse.mvp.data.model.Group
 import hackatum.munichpulse.mvp.data.model.User
+import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.repository.GroupRepository
+import hackatum.munichpulse.mvp.data.repository.EventRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 /**
@@ -21,12 +24,22 @@ class GroupViewModel : ViewModel() {
     // Using the singleton repository directly for now as per existing code structure
     // In a proper DI setup, this would be injected
     private val repository = GroupRepository
+    private val eventRepository = EventRepository()
 
     /**
      * A flow of groups the user belongs to.
      */
     val groups: StateFlow<List<Group>> = repository.getMyGroups()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val groupsWithEvents: StateFlow<List<Pair<Group, Event?>>> = combine(
+        repository.getMyGroups(),
+        eventRepository.getAllEvents()
+    ) { groups, events ->
+        groups.map { group ->
+            group to events.find { it.id == group.eventId }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _uiState = MutableStateFlow(GroupUiState())
     /**
@@ -42,7 +55,7 @@ class GroupViewModel : ViewModel() {
         _uiState.update { it.copy(selectedGroup = group, selectedGroupEvent = null, messages = emptyList()) }
         if (group != null) {
             viewModelScope.launch {
-                hackatum.munichpulse.mvp.data.repository.EventRepository().getEventById(group.eventId).collect { event ->
+                eventRepository.getEventById(group.eventId).collect { event ->
                     _uiState.update { it.copy(selectedGroupEvent = event) }
                 }
             }

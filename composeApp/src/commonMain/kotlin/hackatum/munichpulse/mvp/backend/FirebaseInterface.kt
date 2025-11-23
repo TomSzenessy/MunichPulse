@@ -4,8 +4,8 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.auth.AuthCredential
-// import dev.gitlive.firebase.firestore.DocumentReference
-// import dev.gitlive.firebase.firestore.firestore
+import dev.gitlive.firebase.firestore.DocumentReference
+import dev.gitlive.firebase.firestore.firestore
 import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.model.User
 import kotlinx.coroutines.CoroutineScope
@@ -55,11 +55,11 @@ class FirebaseInterface {
                 println("[FirebaseInterface] auth instance acquired: $auth")
                 // Use localhost for Web to avoid CORS/Network issues with LAN IP
                 if (USE_FIREBASE_EMULATOR) {auth.useEmulator(EMULATOR_IP, 9099)}
-                /*
+                
                 val db = Firebase.firestore
                 println("[FirebaseInterface] firestore instance acquired: $db")
                 if (USE_FIREBASE_EMULATOR) {db.useEmulator(EMULATOR_IP, 8080)}
-                */
+                
                 println("[FirebaseInterface] emulator endpoints configured")
                 initialized = true
             } catch (t: Throwable) {
@@ -73,7 +73,7 @@ class FirebaseInterface {
                 // Only use emulators when explicitly enabled
                 if (USE_FIREBASE_EMULATOR) {
                     Firebase.auth.useEmulator(EMULATOR_IP, 9099)
-                    // Firebase.firestore.useEmulator(EMULATOR_IP, 8080)
+                    Firebase.firestore.useEmulator(EMULATOR_IP, 8080)
                 }
                 initialized = true
             }
@@ -219,7 +219,7 @@ class FirebaseInterface {
 
     // return all events in the database
     suspend fun getAllEvents(): List<Event> {
-        /*
+        
         val db = Firebase.firestore
 
         val collection = db.collection(EVENT_COLLECTION).get()
@@ -241,8 +241,6 @@ class FirebaseInterface {
         }
 
         return eventList.mapNotNull { it }
-        */
-        return emptyList()
     }
 
     /**
