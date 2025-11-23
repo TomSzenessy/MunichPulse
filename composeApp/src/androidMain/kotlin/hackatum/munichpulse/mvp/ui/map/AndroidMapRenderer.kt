@@ -39,13 +39,15 @@ class AndroidMapRenderer : MapRenderer {
         
         // Apply camera position changes
         state.cameraPosition?.let { camera ->
+            state.userLocation?.let { location ->
             viewportState.flyTo(
                 CameraOptions.Builder()
-                    .center(Point.fromLngLat(location.longitude, location.latitude))
-                    .zoom(camera.zoom)
-                    .build(),
+                .center(Point.fromLngLat(location.longitude, location.latitude))
+                .zoom(camera.zoom)
+                .build(),
                 MapAnimationOptions.Builder().duration(300).build()
             )
+            }
         }
 
         MapboxMap(
