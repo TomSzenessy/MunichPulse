@@ -30,7 +30,7 @@ const val EMULATOR_IP: String = "131.159.207.110"
 const val EVENT_COLLECTION: String = "events"
 const val EVENT_NAME_PARAM: String = "title"
 const val EVENT_LOCATION_PARAM: String = "location"
-const val EVENT_DATA_BEGIN_PARAM: String = "begin_date"
+const val EVENT_START_DATE_PARAM: String = "startTime"
 const val EVENT_GROUPS_SUB_COLLECTION: String = "groups"
 const val EVENT_INDIVIDUALS_SUB_COLLECTION: String = "individuals"
 const val EVENT_GROUPS_USERS_LIST: String = "users"
@@ -245,7 +245,8 @@ class FirebaseInterface {
                 EVENT_LOCATION_PARAM to event.location,
                 EVENT_IS_TRENDING_PARAM to event.isTrending,
                 EVENT_IMAGE_URL_PARAM to event.imageUrl,
-                EVENT_FULLNESS_PERCENTAGE_PARAM to event.fullnessPercentage
+                EVENT_FULLNESS_PERCENTAGE_PARAM to event.fullnessPercentage,
+                EVENT_START_DATE_PARAM to event.startTime
             )
             db.collection(EVENT_COLLECTION).add(eventMap)
             println("Da haben wir ja mal was geschaffT!")
@@ -265,7 +266,8 @@ class FirebaseInterface {
                     location = doc.get<String>(EVENT_LOCATION_PARAM),
                     imageUrl = doc.get<String>(EVENT_IMAGE_URL_PARAM),
                     fullnessPercentage = doc.get<Int>(EVENT_FULLNESS_PERCENTAGE_PARAM),
-                    isTrending = doc.get<Boolean>(EVENT_IS_TRENDING_PARAM)
+                    isTrending = doc.get<Boolean>(EVENT_IS_TRENDING_PARAM),
+                    startTime = doc.get<Int>(EVENT_START_DATE_PARAM)
                 )
             }
             catch (e: Exception) {
