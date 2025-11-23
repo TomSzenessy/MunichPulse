@@ -76,7 +76,7 @@ class FirebaseInterface {
             return INSTANCE!!
 
         }
-        
+
     }
 
     fun isSignedIn(): Boolean {
