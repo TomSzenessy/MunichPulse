@@ -6,6 +6,7 @@ import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.auth.AuthCredential
 import dev.gitlive.firebase.firestore.DocumentReference
 import dev.gitlive.firebase.firestore.firestore
+import dev.gitlive.firebase.firestore.*
 import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.model.User
 import kotlinx.coroutines.CoroutineScope
@@ -103,6 +104,10 @@ class FirebaseInterface {
      * and upsert the user document so the same data is available on other devices.
      */
     suspend fun signInWithGoogle(idToken: String, name: String? = null, isLocal: Boolean? = null) {
+        // GoogleAuthProvider.credential parameter order in dev.gitlive:
+        // credential(idToken: String?, accessToken: String?)
+        // When using Google Identity Services (Web) you get only an ID token; pass accessToken = null.
+        // On Android, if you also obtain an OAuth access token, pass it as the second parameter.
         val credential: AuthCredential = GoogleAuthProvider.credential(idToken, null)
         Firebase.auth.signInWithCredential(credential)
         upsertUser(name, isLocal)
@@ -199,7 +204,6 @@ class FirebaseInterface {
 
     // Add list of Events to Firebase Database
     suspend fun addEvents(eventList: List<Event>) {
-        /*
         val db = Firebase.firestore
 
         for (event in eventList) {
@@ -212,9 +216,7 @@ class FirebaseInterface {
                 EVENT_START_DATE_PARAM to event.startTime
             )
             db.collection(EVENT_COLLECTION).add(eventMap)
-            println("Da haben wir ja mal was geschaffT!")
         }
-        */
     }
 
     // return all events in the database
@@ -248,14 +250,65 @@ class FirebaseInterface {
      * Writes events/{eventId}/individuals/{userId} with minimal payload.
      */
     suspend fun addUserToEventIndividuals(eventId: String, userId: String) {
-        /*
         val db = Firebase.firestore
         db.collection(EVENT_COLLECTION)
             .document(eventId)
             .collection(EVENT_INDIVIDUALS_SUB_COLLECTION)
             .document(userId)
             .set(mapOf(USER_UID_PARAM to userId), merge = true)
-        */
+    }
+
+    /**
+     * Retrieve all events that the given user participates in, either by being in a group
+     * (events/{eventId}/groups/{groupId}) or being registered as an individual
+     * (events/{eventId}/individuals/{userId}).
+     *
+     * This function performs targeted queries using collection group queries so that
+     * irrelevant event documents are not fetched.
+     */
+    suspend fun getUserEvents(userId: String): List<Event> {
+        val db = Firebase.firestore
+
+        // Query group memberships across all events via collection group query
+        val groupSnapshots = db
+            .collectionGroup(EVENT_GROUPS_SUB_COLLECTION)
+            .where { EVENT_GROUPS_USERS_LIST contains userId }
+            .get()
+
+        // Query individual registrations across all events via collection group query
+        val individualSnapshots = db
+            .collectionGroup(EVENT_INDIVIDUALS_SUB_COLLECTION)
+            .where { USER_UID_PARAM equalTo userId }
+            .get()
+
+        // Extract parent event ids from the matched documents
+        val eventIdsFromGroups = groupSnapshots.documents.mapNotNull { snap ->
+            try { snap.reference.parent.parent?.id } catch (_: Throwable) { null }
+        }
+        val eventIdsFromIndividuals = individualSnapshots.documents.mapNotNull { snap ->
+            try { snap.reference.parent.parent?.id } catch (_: Throwable) { null }
+        }
+
+        val uniqueEventIds = (eventIdsFromGroups + eventIdsFromIndividuals).toSet()
+        if (uniqueEventIds.isEmpty()) return emptyList()
+
+        // Fetch only the matched event documents
+        val events = uniqueEventIds.mapNotNull { eventId ->
+            try {
+                val doc = db.collection(EVENT_COLLECTION).document(eventId).get()
+                Event(
+                    id = eventId,
+                    title = doc.get<String>(EVENT_NAME_PARAM),
+                    location = doc.get<String>(EVENT_LOCATION_PARAM),
+                    imageUrl = doc.get<String>(EVENT_IMAGE_URL_PARAM),
+                    fullnessPercentage = doc.get<Int>(EVENT_FULLNESS_PERCENTAGE_PARAM),
+                    isTrending = try { doc.get<Boolean>(EVENT_IS_TRENDING_PARAM) } catch (_: Throwable) { false },
+                    startTime = "0"
+                )
+            } catch (_: Throwable) { null }
+        }
+
+        return events
     }
 
     /**
@@ -266,37 +319,6 @@ class FirebaseInterface {
     suspend fun addUserToAvailableGroup(eventId: String, userId: String, maxSize: Int = 5): String {
         return FirestoreService.addUserToAvailableGroup(eventId, userId, maxSize)
     }
-
-    /**
-     * Add the user to the specified group users list (stored as List<String> of UIDs).
-     * Creates the group document if it doesn't exist yet.
-     */
-    suspend fun addUserToGroup(eventId: String, groupId: String, userId: String) {
-        /*
-        val db = Firebase.firestore
-        val groupRef = db.collection(EVENT_COLLECTION)
-            .document(eventId)
-            .collection(EVENT_GROUPS_SUB_COLLECTION)
-            .document(groupId)
-
-        val currentUsers = try {
-            @Suppress("UNCHECKED_CAST")
-            (groupRef.get().get(EVENT_GROUPS_USERS_LIST) as? List<String>) ?: emptyList()
-        } catch (_: Throwable) { emptyList() }
-
-        if (!currentUsers.contains(userId)) {
-            val updated = currentUsers + userId
-            groupRef.set(
-                mapOf(
-                    EVENT_GROUPS_USERS_LIST to updated,
-                    EVENT_GROUPS_USERS_COUNT to updated.size
-                ),
-                merge = true
-            )
-        }
-        */
-    }
-
     /**
      * Remove the user from the specified group.
      */

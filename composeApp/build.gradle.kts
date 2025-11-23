@@ -162,3 +162,8 @@ dependencies {
 tasks.named("compileKotlinJs") {
     dependsOn(tasks.named("generateJsSecrets"))
 }
+
+// Also ensure resource processing (dev server) regenerates secrets when needed
+tasks.matching { it.name == "jsProcessResources" || it.name == "jsBrowserDevelopmentRun" || it.name == "jsBrowserDistribution" }.configureEach {
+    dependsOn(tasks.named("generateJsSecrets"))
+}

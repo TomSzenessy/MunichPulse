@@ -34,6 +34,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        AndroidContextHolder.initContextHolder(this@MainActivity)
+        AndroidContextHolder.getLocation()
+
         //val database = getDatabase(AndroidPlatformContext(applicationContext))
 
         MapboxOptions.accessToken = BuildConfig.MAPBOX_PUBLIC_TOKEN
@@ -66,31 +70,21 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-var trackingPermissions = false
-
-@Preview
-@Composable
-fun AppAndroidPreview() {
-    ProvideAppStrings {
-        UrbanPulseTheme {
-            LoginScreen(onLoginSuccess = { _, _ -> })
-        }
+    companion object {
+        var trackingPermissions = false
     }
-}
 
+/*
+    @Composable
+    fun GpsTrackerScreen() {
+        val context = LocalContext.current
+        var lastLocation by remember { mutableStateOf<Location?>(null) }
+        val locationCallback = { location: Location -> lastLocation = location }
+        val gpsTracker = remember { GpsTracker(context, locationCallback) }
+        val isTracking by gpsTracker.isTracking.collectAsState(initial = false)
 
-
-@Composable
-fun GpsTrackerScreen() {
-    val context = LocalContext.current
-    var lastLocation by remember { mutableStateOf<Location?>(null) }
-    val locationCallback = { location: Location -> lastLocation = location }
-    val gpsTracker = remember { GpsTracker(context, locationCallback) }
-    val isTracking by gpsTracker.isTracking.collectAsState(initial = false)
-
-    // Berechtigungen anfordern
+        // Berechtigungen anfordern
 //    LaunchedEffect(Unit) {
 //        ActivityCompat.requestPermissions(
 //            context as Activity,
@@ -98,41 +92,44 @@ fun GpsTrackerScreen() {
 //            101
 //        )
 //    }
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            "GPS Tracking Test",
-            style = MaterialTheme.typography.headlineMedium
-        ) // Stilnamen können in M3 anders sein
-        Spacer(modifier = Modifier.height(20.dp))
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                "GPS Tracking Test",
+                style = MaterialTheme.typography.headlineMedium
+            ) // Stilnamen können in M3 anders sein
+            Spacer(modifier = Modifier.height(20.dp))
 
-        if (isTracking) {
-            Button(onClick = { gpsTracker.stopTracking() }) {
-                Text("Stop Tracking")
-            }
-        } else {
-            Button(onClick = {
-                gpsTracker.startTracking()
-                //gpsTracker.startTracking()
+            if (isTracking) {
+                Button(onClick = { gpsTracker.stopTracking() }) {
+                    Text("Stop Tracking")
+                }
+            } else {
+                Button(onClick = {
+                    gpsTracker.startTracking()
+                    //gpsTracker.startTracking()
 
-            }) {
-                Text("Start Tracking")
+                }) {
+                    Text("Start Tracking")
+                }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+
+            Text("Status: ${if (isTracking) "Tracking aktiv" else "Gestoppt"}")
+            // ... restliche UI
+
+            Spacer(modifier = Modifier.height(8.dp))
+            lastLocation?.let {
+                Text("Lat: ${it.latitude}")
+                Text("Lon: ${it.longitude}")
+            } ?: Text("Warte auf Standort...")
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-        Text("Status: ${if (isTracking) "Tracking aktiv" else "Gestoppt"}")
-        // ... restliche UI
-
-        Spacer(modifier = Modifier.height(8.dp))
-        lastLocation?.let {
-            Text("Lat: ${it.latitude}")
-            Text("Lon: ${it.longitude}")
-        } ?: Text("Warte auf Standort...")
     }
+
+ */
 }

@@ -1,6 +1,7 @@
 package hackatum.munichpulse.mvp.viewmodel
 
 import androidx.lifecycle.ViewModel
+import hackatum.munichpulse.mvp.backend.GpsTracker
 import hackatum.munichpulse.mvp.model.Location
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,4 +41,8 @@ class MapViewModel : ViewModel() {
     fun setFilter(filter: String) {
         _uiState.update { it.copy(selectedFilter = filter) }
     }
+}
+
+expect object LocationGetter {
+    fun getUserLocation(): Location
 }

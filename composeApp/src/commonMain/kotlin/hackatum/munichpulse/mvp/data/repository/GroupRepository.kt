@@ -63,14 +63,14 @@ object GroupRepository {
     suspend fun joinGroup(eventId: String) {
         if (!FirebaseInterface.getInstance().isSignedIn()) return
         val userId = FirebaseInterface.getInstance().getUserId()
-        FirestoreService.addUserToAvailableGroup(eventId, userId)
+        FirebaseInterface.getInstance().addUserToAvailableGroup(eventId, userId)
         // Flow will update automatically
     }
 
     suspend fun leaveGroup(eventId: String, groupId: String) {
         if (!FirebaseInterface.getInstance().isSignedIn()) return
         val userId = FirebaseInterface.getInstance().getUserId()
-        FirestoreService.leaveGroup(eventId, groupId, userId)
+        FirebaseInterface.getInstance().leaveGroup(eventId, groupId, userId)
         // Flow will update automatically
     }
 
@@ -81,7 +81,7 @@ object GroupRepository {
             text = text,
             timestamp = currentTimeMillis()
         )
-        FirestoreService.sendMessage(eventId, groupId, message)
+        FirebaseInterface.getInstance().sendMessage(eventId, groupId, message)
     }
     
     // refreshGroups is no longer needed with Flow

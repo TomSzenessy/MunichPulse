@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import hackatum.munichpulse.mvp.ui.LocalAppStrings
 import hackatum.munichpulse.mvp.ui.theme.PrimaryGreen
+import hackatum.munichpulse.mvp.viewmodel.LocationGetter
 import hackatum.munichpulse.mvp.viewmodel.MapViewModel
 import kotlinx.coroutines.launch
 
@@ -124,7 +125,7 @@ fun MapScreen(
                 Spacer(modifier = Modifier.height(12.dp))
                 NavigationButton(onClick = {
                     // Reset camera to user location
-                    mapController.recenter(uiState.userLocation)
+                    mapController.recenter(LocationGetter.getUserLocation())
                 })
             }
 
@@ -154,7 +155,7 @@ fun SearchBar(modifier: Modifier = Modifier, query: String = "", onQueryChange: 
         ) {
             Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(if (query.isEmpty()) strings.searchPlaceholder else query, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(query.ifEmpty { strings.searchPlaceholder }, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

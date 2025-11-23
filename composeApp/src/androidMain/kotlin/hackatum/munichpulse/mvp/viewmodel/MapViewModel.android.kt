@@ -1,0 +1,11 @@
+package hackatum.munichpulse.mvp.viewmodel
+
+import hackatum.munichpulse.mvp.AndroidContextHolder
+import hackatum.munichpulse.mvp.backend.GpsTracker
+import hackatum.munichpulse.mvp.model.Location
+
+actual object LocationGetter {
+    actual fun getUserLocation(): Location {
+        return AndroidContextHolder.getLocation() ?: Location(48.1351, 11.5820)
+    }
+}

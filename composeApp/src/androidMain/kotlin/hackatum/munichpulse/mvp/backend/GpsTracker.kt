@@ -11,6 +11,7 @@ import android.location.LocationManager
 import android.os.Looper
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
+import hackatum.munichpulse.mvp.MainActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,13 +41,17 @@ actual class GpsTracker(
 
     private var gpxFile: File? = null
     private var fileWriter: FileWriter? = null
+    private var lastTracking: Location? = null
 
-    private val _isTracking = MutableStateFlow(false)
-    actual val isTracking: Flow<Boolean> = _isTracking.asStateFlow()
+    actual var isTracking = false
 
     // LocationListener, der die empfangenen Standortdaten verarbeitet
     private val locationListener: LocationListener = LocationListener { location ->
         // Ruft den externen Callback auf
+        lastTracking = location
+        locationListenerCallback(
+            hackatum.munichpulse.mvp.model.Location(location.latitude, location.longitude)
+        )
         locationUpdateCallback(location)
         // Fügt den neuen Punkt zur GPX-Datei hinzu
         addTrackpoint(location)
@@ -73,28 +78,31 @@ actual class GpsTracker(
             // Zum Beispiel, indem eine Exception geworfen oder ein Fehlerzustand signalisiert wird.
             println("GPS-Tracking kann nicht gestartet werden: Keine Berechtigung.")
             return
+        } else {
+            MainActivity.trackingPermissions = true
         }
 
-        if (_isTracking.value) return // Verhindert mehrfaches Starten
+        if (isTracking) return // Verhindert mehrfaches Starten
+        if (MainActivity.trackingPermissions) {
+            try {
+                //gpxFile = createGpxFile()
+                //fileWriter = FileWriter(gpxFile, true)
+                //fileWriter?.append(getGpxHeader())
 
-        try {
-            gpxFile = createGpxFile()
-            fileWriter = FileWriter(gpxFile, true)
-            fileWriter?.append(getGpxHeader())
-
-            // Fordert Standort-Updates vom GPS-Anbieter an
-            locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                5000L, // Mindestzeitintervall in Millisekunden (5 Sek.)
-                5f,    // Mindestdistanz in Metern (5 Meter)
-                locationListener,
-                Looper.getMainLooper() // Stellt sicher, dass der Listener auf dem Haupt-Thread läuft
-            )
-            _isTracking.value = true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            // Hier könnte eine robustere Fehlerbehandlung implementiert werden
-            stopTracking() // Aufräumen im Fehlerfall
+                // Fordert Standort-Updates vom GPS-Anbieter an
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    5000L, // Mindestzeitintervall in Millisekunden (5 Sek.)
+                    5f,    // Mindestdistanz in Metern (5 Meter)
+                    locationListener,
+                    Looper.getMainLooper() // Stellt sicher, dass der Listener auf dem Haupt-Thread läuft
+                )
+                isTracking = true
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // Hier könnte eine robustere Fehlerbehandlung implementiert werden
+                stopTracking() // Aufräumen im Fehlerfall
+            }
         }
     }
 
@@ -103,7 +111,7 @@ actual class GpsTracker(
      * Deregistriert den LocationListener und schließt die GPX-Datei.
      */
     actual fun stopTracking() {
-        if (!_isTracking.value) return
+        if (!isTracking) return
 
         locationManager.removeUpdates(locationListener)
         try {
@@ -115,7 +123,7 @@ actual class GpsTracker(
             // Setzt die Zustände zurück
             fileWriter = null
             gpxFile = null
-            _isTracking.value = false
+            isTracking = false
         }
     }
 
@@ -172,5 +180,21 @@ actual class GpsTracker(
 </trk>
 </gpx>
 """
+    }
+
+    actual fun locationListenerCallback(location: hackatum.munichpulse.mvp.model.Location) {
+    }
+
+    actual fun getLocation(): hackatum.munichpulse.mvp.model.Location {
+        startTracking()
+        if (lastTracking != null) {
+            val returnVal = hackatum.munichpulse.mvp.model.Location(
+                lastTracking!!.latitude, lastTracking!!.latitude
+            )
+            print("Coords: " + returnVal)
+            // stopTracking()
+            return returnVal
+        }
+        return hackatum.munichpulse.mvp.model.Location(48.1351, 11.5820)
     }
 }
