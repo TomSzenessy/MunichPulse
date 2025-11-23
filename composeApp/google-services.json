@@ -12,7 +12,20 @@
           "package_name": "hackatum.munichpulse.mvp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "2145662120-6v1iqve72bveppvdj1f4r1l6cmelpn6u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hackatum.munichpulse.mvp",
+            "certificate_hash": "f60e80e084d1c9c191cadf27f017e7eef14f7cf6"
+          }
+        },
+        {
+          "client_id": "2145662120-mvivv9j2di7s5ct2uncr8q87is77pr10.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDicKumHyjsuKBmMYofazibrFIWsHcHKJs"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2145662120-mvivv9j2di7s5ct2uncr8q87is77pr10.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
