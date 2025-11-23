@@ -108,6 +108,7 @@ fun EventDetailScreen(
                         )
                     }
 
+
                     Button(
                         onClick = { openJoinDialog.value = true },
                         modifier = Modifier.fillMaxWidth()
