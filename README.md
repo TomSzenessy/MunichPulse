@@ -56,3 +56,6 @@ Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-mu
 
 We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
 If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+
+
+If you just want to run the project and have an easy install, feel free to use the distribtion in Firebase App Distribution: https://appdistribution.firebase.dev/i/e5da15f23545ef35
