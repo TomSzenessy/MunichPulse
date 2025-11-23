@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -10,35 +12,75 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
+
+val mapboxToken = localProperties.getProperty("MAPBOX_PUBLIC_TOKEN") ?: ""
+
+// Task to generate Secrets.kt for JS
+tasks.register("generateJsSecrets") {
+    val outputDir = layout.buildDirectory.dir("generated/js")
+    outputs.dir(outputDir)
+    val token = mapboxToken
+
+    doLast {
+        val file = outputDir.get().file("hackatum/munichpulse/mvp/js/Secrets.kt").asFile
+        file.parentFile.mkdirs()
+        file.writeText("""
+            package hackatum.munichpulse.mvp.js
+            
+            object Secrets {
+                const val MAPBOX_PUBLIC_TOKEN = "$token"
+            }
+        """.trimIndent())
+        }
+}
+
+//// Task to generate Secrets.kt for JS
+//tasks.register("generateJsSecrets") {
+//    val secretsDir = file("$buildDir/generated/js")
+//    val secretsFile = file("$secretsDir/hackatum/munichpulse/mvp/js/Secrets.kt")
+//    outputs.dir(secretsDir)
+//    doLast {
+//        secretsFile.parentFile.mkdirs()
+//        val token = localProperties.getProperty("MAPBOX_PUBLIC_TOKEN") ?: ""
+//        secretsFile.writeText("""
+//            package hackatum.munichpulse.mvp.js
+//
+//            object Secrets {
+//                const val MAPBOX_PUBLIC_TOKEN = "$token"
+//            }
+//        """.trimIndent())
+//    }
+//}
+
 kotlin {
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
         }
     }
-    
+
     js {
         browser()
         binaries.executable()
     }
-    
-//    @OptIn(ExperimentalWasmDsl::class)
-//    wasmJs {
-//        browser()
-//        binaries.executable()
-//    }
-    
+
     sourceSets {
+        val jsMain by getting {
+            kotlin.srcDir(tasks.named("generateJsSecrets").map { it.outputs.files.singleFile })
+        }
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-
-            // Use explicit versions for Firebase Android SDKs within KMP androidMain to avoid BOM issues
             implementation("com.google.firebase:firebase-auth-ktx:23.2.1")
             implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
             implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
             implementation("com.google.android.gms:play-services-auth:21.0.0")
-
             implementation("com.mapbox.maps:android:${libs.versions.mapbox.get()}")
             implementation("com.mapbox.extension:maps-compose:${libs.versions.mapbox.get()}")
             implementation(libs.ktor.client.okhttp)
@@ -61,7 +103,6 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.multiplatform.settings)
             implementation(libs.kotlinx.datetime)
-
             implementation(libs.firebase.firestore) // example
             implementation(libs.firebase.auth)
             implementation(libs.kotlinx.coroutines.core)
@@ -91,6 +132,10 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        buildConfigField("String", "MAPBOX_PUBLIC_TOKEN", "\"${localProperties.getProperty("MAPBOX_PUBLIC_TOKEN") ?: ""}\"")
+    }
+    buildFeatures {
+        buildConfig = true
     }
     packaging {
         resources {
@@ -110,4 +155,9 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+}
+
+// Make sure js sources are generated before they are compiled
+tasks.named("compileKotlinJs") {
+    dependsOn(tasks.named("generateJsSecrets"))
 }

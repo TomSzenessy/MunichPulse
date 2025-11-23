@@ -1,5 +1,5 @@
 package hackatum.munichpulse.mvp.ui.components
-
+import hackatum.munichpulse.mvp.js.Secrets
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kotlinx.browser.document
@@ -22,8 +22,8 @@ actual fun MapView(
     // Mapbox implementation for Web
     // We inject the Mapbox GL JS script and CSS if not already present
     // And then create a container div
-    
-    val mapboxAccessToken = "sk.eyJ1IjoidG9tc3oiLCJhIjoiY21pYTMxcXJ0MG9zMjJrc2UxazZuZnZydiJ9.rlkxCI0Tuj62ZNHr-HmJYA"
+
+    val mapboxAccessToken = Secrets.MAPBOX_PUBLIC_TOKEN
 
     // Since we are in Canvas based Compose, we can't easily render a DOM element *inside* the canvas layout.
     // However, we can create a floating div on top of the canvas.
@@ -31,7 +31,7 @@ actual fun MapView(
     // or a specific area. But positioning it relative to the Compose layout is hard.
     
     val mapContainerId = "map-container-${Random.nextInt()}"
-    
+   
     SideEffect {
         // Check if map container exists, if not create it
         if (document.getElementById(mapContainerId) == null) {
@@ -42,7 +42,7 @@ actual fun MapView(
             div.style.left = "0"
             div.style.width = "100%"
             div.style.height = "100%"
-            div.style.zIndex = "-1" // Behind the canvas
+            div.style.zIndex = "0" // Behind the canvas
             
             document.body?.appendChild(div)
             

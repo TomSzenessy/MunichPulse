@@ -28,12 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import hackatum.munichpulse.mvp.backend.GpsTracker
 import kotlin.collections.mapIndexed
+import com.mapbox.common.MapboxOptions
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         //val database = getDatabase(AndroidPlatformContext(applicationContext))
+
+        MapboxOptions.accessToken = BuildConfig.MAPBOX_PUBLIC_TOKEN
 
         setContent {
             App()

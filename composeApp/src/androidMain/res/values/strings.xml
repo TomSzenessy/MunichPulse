@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Munich Pulse</string>
-    <string name="mapbox_access_token">pk.eyJ1IjoidG9tc3oiLCJhIjoiY21ibzBucnIyMXVhaTJtcHp5OW5kMXI2NCJ9.2pZqW9kZ5l1Kiani21T_Jg</string>
 </resources>

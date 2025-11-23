@@ -44,7 +44,7 @@ fun MainScreen(onEventClick: (String) -> Unit) {
     )) {
         val isWideScreen = maxWidth > 800.dp
 
-        Row(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.fillMaxSize().background(Color.Transparent)) {
             if (isWideScreen) {
                 NavigationRail(
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -60,7 +60,7 @@ fun MainScreen(onEventClick: (String) -> Unit) {
                     }
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
-                    AppScreen.values().forEach { screen ->
+                    AppScreen.entries.forEach { screen ->
                         NavigationRailItem(
                             icon = { Icon(screen.icon, contentDescription = screen.getLabel(strings)) },
                             label = { Text(screen.getLabel(strings)) },
@@ -88,7 +88,7 @@ fun MainScreen(onEventClick: (String) -> Unit) {
                             containerColor = MaterialTheme.colorScheme.surface,
                             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                         ) {
-                            AppScreen.values().forEach { screen ->
+                            AppScreen.entries.forEach { screen ->
                                 NavigationBarItem(
                                     icon = { Icon(screen.icon, contentDescription = screen.getLabel(strings)) },
                                     label = { Text(screen.getLabel(strings)) },

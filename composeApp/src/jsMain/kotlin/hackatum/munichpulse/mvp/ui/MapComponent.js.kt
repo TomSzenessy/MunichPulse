@@ -8,6 +8,7 @@ import kotlinx.browser.document
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import kotlin.js.json
+import hackatum.munichpulse.mvp.js.Secrets
 
 // External declarations for Mapbox GL JS
 @JsModule("mapbox-gl")
@@ -28,6 +29,8 @@ external object MapboxGl {
         fun getElement(): HTMLElement
     }
 }
+
+private external val process: dynamic
 
 class JsMapController : MapController {
     var map: MapboxGl.Map? = null
@@ -84,14 +87,13 @@ actual fun MapComponent(
             left = "0"
             width = "100%"
             height = "100%"
-            zIndex = "1" // Behind the canvas but above background
+            zIndex = "0" // Behind the canvas
+            backgroundColor = "transparent"
         }
+        console.log("Map container created with zIndex 0")
         document.body?.appendChild(mapContainer)
-        
-        // TODO: Replace with your actual Mapbox public access token
-        // Make sure the token is valid and has the correct scopes (public).
-        // If you see 401 Unauthorized, the token is likely invalid or domain-restricted.
-        MapboxGl.accessToken = "pk.eyJ1IjoidG9tc3oiLCJhIjoiY21ibzBucnIyMXVhaTJtcHp5OW5kMXI2NCJ9.2pZqW9kZ5l1Kiani21T_Jg" 
+
+        MapboxGl.accessToken = Secrets.MAPBOX_PUBLIC_TOKEN
 
         val map = MapboxGl.Map(json(
             "container" to containerId,

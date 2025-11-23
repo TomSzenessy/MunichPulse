@@ -5,14 +5,13 @@ import androidx.lifecycle.viewModelScope
 import hackatum.munichpulse.mvp.DataController
 import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.repository.EventRepository
-import hackatum.munichpulse.mvp.data.repository.MockEventRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class EventDetailViewModel(
-    private val repository: EventRepository = MockEventRepository()
+    private val repository: EventRepository = EventRepository()
 ) : ViewModel() {
 
     private val _event = MutableStateFlow<Event?>(null)
@@ -27,11 +26,20 @@ class EventDetailViewModel(
     }
 
     /**
-     * Add a user to a specific group for this event (delegates to DataController -> Firebase).
+     * Add a user to a random group for this event (delegates to DataController -> Firebase).
      */
-    fun addUserToSpecificGroup(eventId: String, groupId: String) {
+    fun addUserToEventGroup(eventId: String) {
         viewModelScope.launch {
-            DataController.getInstance().addUserToEventGroup(eventId, groupId)
+            DataController.getInstance().addUserToEventGroup(eventId)
+        }
+    }
+
+    /**
+     * Add a user to an individual people group for this event (delegates to DataController -> Firebase).
+     */
+    fun addUserToIndividualEventGroup(eventId: String) {
+        viewModelScope.launch {
+            DataController.getInstance().addUserToEventIndividuals(eventId)
         }
     }
 }
