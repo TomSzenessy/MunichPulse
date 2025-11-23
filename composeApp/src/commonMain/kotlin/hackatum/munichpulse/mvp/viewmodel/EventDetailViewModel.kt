@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class EventDetailViewModel(
-    private val repository: EventRepository = MockEventRepository()
+    private val repository: EventRepository = EventRepository()
 ) : ViewModel() {
 
     private val _event = MutableStateFlow<Event?>(null)

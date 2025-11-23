@@ -5,17 +5,6 @@
 // 3) Keep this file in composeApp/src/webMain/resources so it is served with the web build.
 // 4) Consider storing real keys outside of VCS and generating this file at build time if needed.
 
-// Example:
-// const firebaseConfig = {
-//   apiKey: "YOUR_API_KEY",
-//   authDomain: "your-project.firebaseapp.com",
-//   projectId: "your-project-id",
-//   storageBucket: "your-project-id.firebasestorage.app",
-//   messagingSenderId: "1234567890",
-//   appId: "1:1234567890:web:abcdef123456",
-// };
-
-// NOTE: Replace the placeholders with your actual Firebase Web App config values.
 const firebaseConfig = {
     apiKey: "AIzaSyD9EqFdZYATTdkY41UQbJwvCrTsBYASIv4",
     authDomain: "munichpulse-53738.firebaseapp.com",

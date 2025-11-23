@@ -41,9 +41,12 @@ fun ProfileScreen(
             .padding(bottom = 80.dp)
     ) {
         item {
+            var avatarUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuDQts8JbmFxIyYdug0PKmZl5OdhBLP9hTKxz_uKAnvZpuac-30tETuTBqRdPE5DEPk5hGdiNUmR-lJ0TMYJd9x8vnY8MAnOUuRtk_Jxmnq_35gj4zrpxZBXXxQRWPEfbXQjl2HAwfxM3A7w_cffrbD-w42pStMjw3Xy16IVJblj48904FPZMfxkyduNsXQBWhVSAVdLq_SbrEQbfJZJCXmXbYCk6CZCMyZ6-vXnpoR1nrxlPFW3EaC_KF9HD_GeA6bx_ua7c20OJft0"
+            if (user?.avatarUrl != null && user?.avatarUrl?.isNotEmpty() == true)
+                avatarUrl = user?.avatarUrl!!
             ProfileHeader(
                 name = user?.name ?: "Loading...",
-                avatarUrl = user?.avatarUrl,
+                avatarUrl = avatarUrl,
                 isLocal = user?.isLocal == true
             )
         }
@@ -120,25 +123,7 @@ fun SettingsSection(viewModel: ProfileViewModel) {
 fun ProfileHeader(name: String, avatarUrl: String?, isLocal: Boolean) {
     val strings = LocalAppStrings.current
     Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)) {
-        // Top Bar
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { /* Back */ }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onBackground)
-            }
-            Text(
-                strings.profileTab,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
-            Spacer(modifier = Modifier.size(48.dp)) // Balance back button
-        }
-
+        Spacer(modifier = Modifier.height(20.dp))
         // Avatar and Stats
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
