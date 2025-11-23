@@ -9,6 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.firestore.firestore
 import hackatum.munichpulse.mvp.backend.FirebaseInterface
 import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.repository.GroupRepository
@@ -30,11 +32,11 @@ import kotlinx.coroutines.launch
 fun App() {
     val isDarkMode by SettingsRepository.isDarkMode.collectAsState()
 
-    CoroutineScope(Dispatchers.Unconfined).launch {
-        FirebaseInterface.getInstance().addEvents(loadEventsFromResources("files/mock_events_two.json"))
-        print("Baum")
-        println("XKCD" + FirebaseInterface.getInstance().getAllEvents())
-    }
+//    CoroutineScope(Dispatchers.Unconfined).launch {
+//        FirebaseInterface.getInstance().addEvents(loadEventsFromResources("files/mock_events_two.json"))
+//        print("Baum")
+//        println("XKCD" + FirebaseInterface.getInstance().getAllEvents())
+//    }
 
     LaunchedEffect(Unit) {
         // Initialize repositories
