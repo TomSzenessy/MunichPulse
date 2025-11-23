@@ -1,5 +1,6 @@
 package hackatum.munichpulse.mvp.ui
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -316,7 +317,12 @@ fun LanguageToggle() {
         ) {
             Icon(Icons.Default.Language, contentDescription = "Language", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurface)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(strings.languageButton, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+            val isDark = isSystemInDarkTheme()
+            Text(
+                strings.languageButton,
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                color = if (isDark) Color.White else Color.Black
+            )
         }
     }
 }

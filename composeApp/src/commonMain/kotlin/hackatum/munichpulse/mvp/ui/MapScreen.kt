@@ -128,16 +128,6 @@ fun MapScreen(
                 })
             }
 
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 80.dp)
-                    .fillMaxWidth()
-                    .height(60.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                WaveformAnimation()
-            }
         }
     }
 }
@@ -206,32 +196,5 @@ fun NavigationButton(onClick: () -> Unit) {
             tint = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.rotate(45f)
         )
-    }
-}
-
-@Composable
-fun WaveformAnimation() {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.height(40.dp)
-    ) {
-        repeat(8) { index -> 
-            val infiniteTransition = rememberInfiniteTransition()
-            val scale by infiniteTransition.animateFloat(
-                initialValue = 0.2f,
-                targetValue = 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(1000, delayMillis = index * 100, easing = FastOutSlowInEasing),
-                    repeatMode = RepeatMode.Reverse
-                )
-            )
-            Box(
-                modifier = Modifier
-                    .width(4.dp)
-                    .fillMaxHeight(scale)
-                    .background(PrimaryGreen, CircleShape)
-            )
-        }
     }
 }

@@ -29,14 +29,27 @@ import hackatum.munichpulse.mvp.ui.theme.PrimaryGreen
 
 enum class AppScreen(val label: String, val icon: ImageVector) {
     Home("Home", Icons.Default.Home),
-    Squads("Squads", Icons.Default.AccountCircle),
+    Groups("Groups", Icons.Default.AccountCircle),
     Map("Map", Icons.Default.Place),
     Profile("Profile", Icons.Default.Person)
 }
 
 @Composable
-fun MainScreen(onEventClick: (String) -> Unit) {
-    var currentScreen by remember { mutableStateOf(AppScreen.Home) }
+fun MainScreen(
+    onEventClick: (String) -> Unit,
+    initialScreen: AppScreen = AppScreen.Home,
+    initialGroupId: String? = null
+) {
+    var currentScreen by remember { mutableStateOf(initialScreen) }
+    
+    // Handle initial navigation if provided (e.g. from deep link or back navigation)
+    LaunchedEffect(initialScreen, initialGroupId) {
+        currentScreen = initialScreen
+        // If we are navigating to Groups and have a groupId, we should select it.
+        // However, GroupViewModel is scoped to GroupScreen currently.
+        // We need to hoist it or pass the ID down.
+        // Since we can't easily hoist without changing a lot, let's pass initialGroupId to GroupScreen.
+    }
     val strings = LocalAppStrings.current
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize().background(
@@ -115,8 +128,9 @@ fun MainScreen(onEventClick: (String) -> Unit) {
                 ) {
                     when (currentScreen) {
                         AppScreen.Home -> HomeScreen(onEventClick = onEventClick)
-                        AppScreen.Squads -> GroupScreen()
+                        AppScreen.Groups -> GroupScreen(onEventClick = onEventClick, initialGroupId = initialGroupId)
                         AppScreen.Map -> MapScreen()
+                        
                         AppScreen.Profile -> ProfileScreen()
                     }
                 }
@@ -128,7 +142,7 @@ fun MainScreen(onEventClick: (String) -> Unit) {
 fun AppScreen.getLabel(strings: AppStrings): String {
     return when(this) {
         AppScreen.Home -> strings.homeTab
-        AppScreen.Squads -> strings.squadsTab
+        AppScreen.Groups -> strings.groupsTab
         AppScreen.Map -> strings.mapTab
         AppScreen.Profile -> strings.profileTab
     }

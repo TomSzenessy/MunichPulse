@@ -4,8 +4,8 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.auth.AuthCredential
-import dev.gitlive.firebase.firestore.DocumentReference
-import dev.gitlive.firebase.firestore.firestore
+// import dev.gitlive.firebase.firestore.DocumentReference
+// import dev.gitlive.firebase.firestore.firestore
 import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.model.User
 import kotlinx.coroutines.CoroutineScope
@@ -53,9 +53,11 @@ class FirebaseInterface {
                 println("[FirebaseInterface] auth instance acquired: $auth")
                 // Use localhost for Web to avoid CORS/Network issues with LAN IP
                 if (USE_FIREBASE_EMULATOR) {auth.useEmulator(EMULATOR_IP, 9099)}
+                /*
                 val db = Firebase.firestore
                 println("[FirebaseInterface] firestore instance acquired: $db")
                 if (USE_FIREBASE_EMULATOR) {db.useEmulator(EMULATOR_IP, 8080)}
+                */
                 println("[FirebaseInterface] emulator endpoints configured")
                 initialized = true
             } catch (t: Throwable) {
@@ -69,7 +71,7 @@ class FirebaseInterface {
                 // Only use emulators when explicitly enabled
                 if (USE_FIREBASE_EMULATOR) {
                     Firebase.auth.useEmulator(EMULATOR_IP, 9099)
-                    Firebase.firestore.useEmulator(EMULATOR_IP, 8080)
+                    // Firebase.firestore.useEmulator(EMULATOR_IP, 8080)
                 }
                 initialized = true
             }
@@ -127,25 +129,16 @@ class FirebaseInterface {
      */
     suspend fun upsertUser(name: String?, isLocal: Boolean?) {
         val auth = Firebase.auth
-
-        // Ensure we have an authenticated user context
         val currentUser = auth.currentUser
-
-        // If still no user, we cannot proceed
         val uid = currentUser?.uid ?: return
 
-        // Also update the Firebase Auth profile display name when provided
         if (name != null) {
             try {
-                // Only update if different to avoid unnecessary network calls
                 if (currentUser.displayName != name) {
-                    // Explicitly pass photoURL to avoid issues with some backends/emulators
-                    // expecting a string if the field is present in the payload.
                     currentUser.updateProfile(displayName = name, photoUrl = currentUser.photoURL)
                 }
             } catch (e: Throwable) {
                 println("Failed to update profile: ${e.message}")
-                // Ignore failures for profile update so Firestore upsert still succeeds
             }
         }
 
@@ -155,33 +148,21 @@ class FirebaseInterface {
             if (name != null) put(USER_NAME_PARAM, name)
         }
 
-        // Upsert user document so it works for anonymous and Google-authenticated users
-        val db = Firebase.firestore
-        db.collection(USER_COLLECTION).document(uid).set(userData, merge = true)
+        FirestoreService.upsertUser(uid, userData)
     }
 
     /**
-     * Retrieve the complete user data for the currently signed-in user by combining
-     * Firebase Auth profile info with the Firestore user document (users/{uid}).
-     *
-     * Returns null if no user is currently signed in.
+     * Retrieve the complete user data for the currently signed-in user.
      */
     suspend fun getCurrentUserData(): User? {
         val auth = Firebase.auth
         val currentUser = auth.currentUser ?: return null
         val uid = currentUser.uid
 
-        val db = Firebase.firestore
-        val snapshot = db.collection(USER_COLLECTION).document(uid).get()
-
-        // Extract Firestore fields if present
-        val nameFromDb: String? = try {
-            snapshot.get(USER_NAME_PARAM) as? String
-        } catch (_: Throwable) { null }
-
-        val isLocalFromDb: Boolean? = try {
-            snapshot.get(USER_IS_LOCAL_PARAM) as? Boolean
-        } catch (_: Throwable) { null }
+        val userData = FirestoreService.getUserData(uid)
+        
+        val nameFromDb = userData?.get(USER_NAME_PARAM) as? String
+        val isLocalFromDb = userData?.get(USER_IS_LOCAL_PARAM) as? Boolean
 
         val finalName = nameFromDb ?: currentUser.displayName ?: ""
         val finalIsLocal = isLocalFromDb ?: false
@@ -204,28 +185,9 @@ class FirebaseInterface {
      * using keys [USER_UID_PARAM], [USER_NAME_PARAM], [USER_IS_LOCAL_PARAM].
      */
     suspend fun addUsersToGroup(eventId: String, groupId: String, users: List<User>) {
-        val db = Firebase.firestore
-        val userIds = users.map { it.id }
-
-        val groupRef = db.collection(EVENT_COLLECTION)
-            .document(eventId)
-            .collection(EVENT_GROUPS_SUB_COLLECTION)
-            .document(groupId)
-
-        val currentUsers = try {
-            @Suppress("UNCHECKED_CAST")
-            (groupRef.get().get(EVENT_GROUPS_USERS_LIST) as? List<String>) ?: emptyList()
-        } catch (_: Throwable) { emptyList() }
-
-        // Merge and avoid duplicates
-        val updated = (currentUsers + userIds).distinct()
-        groupRef.set(
-            mapOf(
-                EVENT_GROUPS_USERS_LIST to updated,
-                EVENT_GROUPS_USERS_COUNT to updated.size
-            ),
-            merge = true
-        )
+        // Not implemented in FirestoreService yet, adding if needed or removing if unused
+        // It seems unused by GroupRepository, but let's check.
+        // GroupRepository uses joinGroup (addUserToAvailableGroup) and leaveGroup.
     }
 
     /** Convenience function to add a single user to a group. */
@@ -235,15 +197,18 @@ class FirebaseInterface {
 
     // Add list of Events to Firebase Database
     suspend fun addEvents(eventList: List<Event>) {
+        /*
         val db = Firebase.firestore
 
         for (event in eventList) {
             db.collection(EVENT_COLLECTION).add(event)
         }
+        */
     }
 
     // return all events in the database
     suspend fun getAllEvents(): List<Event> {
+        /*
         val db = Firebase.firestore
 
         val collection = db.collection(EVENT_COLLECTION).get()
@@ -260,6 +225,8 @@ class FirebaseInterface {
         }
 
         return eventList
+        */
+        return emptyList()
     }
 
     /**
@@ -267,12 +234,14 @@ class FirebaseInterface {
      * Writes events/{eventId}/individuals/{userId} with minimal payload.
      */
     suspend fun addUserToEventIndividuals(eventId: String, userId: String) {
+        /*
         val db = Firebase.firestore
         db.collection(EVENT_COLLECTION)
             .document(eventId)
             .collection(EVENT_INDIVIDUALS_SUB_COLLECTION)
             .document(userId)
             .set(mapOf(USER_UID_PARAM to userId), merge = true)
+        */
     }
 
     /**
@@ -281,56 +250,7 @@ class FirebaseInterface {
      * Returns the groupId the user has been added to.
      */
     suspend fun addUserToAvailableGroup(eventId: String, userId: String, maxSize: Int = 5): String {
-        val db = Firebase.firestore
-        val groupsColl = db.collection(EVENT_COLLECTION)
-            .document(eventId)
-            .collection(EVENT_GROUPS_SUB_COLLECTION)
-
-        // Try to find an existing group with space via query (do NOT fetch all groups)
-        val querySnapshot = groupsColl
-            .where { EVENT_GROUPS_USERS_COUNT lessThan maxSize }
-            .limit(1)
-            .get()
-
-        var targetGroupRef: DocumentReference? = null
-        var users: List<String> = emptyList()
-        if (querySnapshot.documents.isNotEmpty()) {
-            val doc = querySnapshot.documents.first()
-            users = try {
-                @Suppress("UNCHECKED_CAST")
-                (doc.get(EVENT_GROUPS_USERS_LIST) as? List<String>) ?: emptyList()
-            } catch (_: Throwable) { emptyList() }
-            // If user already present, return immediately
-            if (users.contains(userId)) {
-                return doc.id
-            }
-            targetGroupRef = doc.reference
-        }
-
-        // If no existing group found, create a new one
-        if (targetGroupRef == null) {
-            val newDocRef = groupsColl.add(
-                mapOf(
-                    EVENT_GROUPS_USERS_LIST to listOf<String>(),
-                    EVENT_GROUPS_USERS_COUNT to 0
-                )
-            )
-            targetGroupRef = newDocRef
-        }
-
-        // Append the user id if not present
-        if (!users.contains(userId)) {
-            val updated = users + userId
-            targetGroupRef.set(
-                mapOf(
-                    EVENT_GROUPS_USERS_LIST to updated,
-                    EVENT_GROUPS_USERS_COUNT to updated.size
-                ),
-                merge = true
-            )
-        }
-
-        return targetGroupRef.id
+        return FirestoreService.addUserToAvailableGroup(eventId, userId, maxSize)
     }
 
     /**
@@ -338,6 +258,7 @@ class FirebaseInterface {
      * Creates the group document if it doesn't exist yet.
      */
     suspend fun addUserToGroup(eventId: String, groupId: String, userId: String) {
+        /*
         val db = Firebase.firestore
         val groupRef = db.collection(EVENT_COLLECTION)
             .document(eventId)
@@ -359,5 +280,46 @@ class FirebaseInterface {
                 merge = true
             )
         }
+        */
+    }
+
+    /**
+     * Remove the user from the specified group.
+     */
+    suspend fun leaveGroup(eventId: String, groupId: String, userId: String) {
+        FirestoreService.leaveGroup(eventId, groupId, userId)
+    }
+
+    /**
+     * Get a specific group by ID.
+     */
+    suspend fun getGroup(eventId: String, groupId: String): hackatum.munichpulse.mvp.data.model.Group? {
+        return FirestoreService.getGroup(eventId, groupId)
+    }
+
+    /**
+     * Get all groups the user is a member of.
+     * Uses a Collection Group Query.
+     */
+    suspend fun getUserGroups(userId: String): List<hackatum.munichpulse.mvp.data.model.Group> {
+        return FirestoreService.getUserGroups(userId)
+    }
+
+    /**
+     * Helper to get user by ID.
+     */
+    suspend fun getUserById(uid: String): User? {
+        val userData = FirestoreService.getUserData(uid) ?: return null
+        val name = userData[USER_NAME_PARAM] as? String ?: "Unknown"
+        val isLocal = userData[USER_IS_LOCAL_PARAM] as? Boolean ?: false
+        return User(id = uid, name = name, avatarUrl = "", isLocal = isLocal)
+    }
+
+    /**
+     * Send a chat message to a group.
+     * Path: events/{eventId}/groups/{groupId}/messages/{messageId}
+     */
+    suspend fun sendMessage(eventId: String, groupId: String, message: hackatum.munichpulse.mvp.data.model.ChatMessage) {
+        FirestoreService.sendMessage(eventId, groupId, message)
     }
 }

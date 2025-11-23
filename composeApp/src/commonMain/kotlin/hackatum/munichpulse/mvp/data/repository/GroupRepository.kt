@@ -1,10 +1,18 @@
 package hackatum.munichpulse.mvp.data.repository
 
+import hackatum.munichpulse.mvp.backend.FirebaseInterface
+import hackatum.munichpulse.mvp.backend.FirestoreService
 import hackatum.munichpulse.mvp.data.model.ChatMessage
 import hackatum.munichpulse.mvp.data.model.Group
 import hackatum.munichpulse.mvp.data.model.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 import hackatum.munichpulse.mvp.currentTimeMillis
 
@@ -19,80 +27,62 @@ object GroupRepository {
      */
     val groups = _groups.asStateFlow()
 
+    private var refreshJob: Job? = null
+
     /**
      * Initializes the repository.
      */
     fun init() {
-        refreshGroups()
+        startObservingGroups()
     }
 
-    private fun refreshGroups() {
-        // Mock data
-        val mockGroups = listOf(
-            Group(
-                id = "1",
-                eventId = "event1",
-                members = listOf(
-                    User("u1", "Alice", "", true),
-                    User("u2", "Bob", "", false)
-                ),
-                chatMessages = listOf(
-                    ChatMessage("m1", "u1", "Hey everyone!", currentTimeMillis() - 10000),
-                    ChatMessage("m2", "u2", "Hello!", currentTimeMillis() - 5000)
-                )
-            ),
-            Group(
-                id = "2",
-                eventId = "event2",
-                members = listOf(
-                    User("u3", "Charlie", "", true),
-                    User("u4", "Dave", "", false)
-                ),
-                chatMessages = listOf(
-                    ChatMessage("m3", "u3", "Anyone going to the concert?", currentTimeMillis() - 20000)
-                )
-            )
-        )
-        _groups.value = mockGroups
+    private fun startObservingGroups() {
+        refreshJob?.cancel()
+        refreshJob = CoroutineScope(Dispatchers.Default).launch {
+            // Wait for sign in or observe auth state?
+            // For now, simple check. Ideally we observe auth state.
+            while (isActive) {
+                if (FirebaseInterface.getInstance().isSignedIn()) {
+                    val userId = FirebaseInterface.getInstance().getUserId()
+                    FirestoreService.getUserGroupsFlow(userId).collect { fetchedGroups ->
+                        _groups.value = fetchedGroups
+                    }
+                    break // Once collecting, we don't need to loop unless auth changes/flow completes
+                }
+                delay(1000) // Wait for auth
+            }
+        }
     }
 
     fun getMyGroups() = groups
 
-    fun joinEvent(eventId: String, user: User) {
-        // Mock implementation: Add user to a group for this event
-        val currentGroups = _groups.value.toMutableList()
-        val existingGroupIndex = currentGroups.indexOfFirst { it.eventId == eventId }
-
-        if (existingGroupIndex != -1) {
-            val group = currentGroups[existingGroupIndex]
-            val updatedMembers = group.members + user
-            currentGroups[existingGroupIndex] = group.copy(members = updatedMembers)
-        } else {
-            val newGroup = Group(
-                id = (currentGroups.size + 1).toString(),
-                eventId = eventId,
-                members = listOf(user)
-            )
-            currentGroups.add(newGroup)
-        }
-        _groups.value = currentGroups
+    fun getMessages(eventId: String, groupId: String): kotlinx.coroutines.flow.Flow<List<ChatMessage>> {
+        return FirestoreService.getMessagesFlow(eventId, groupId)
     }
 
-    fun sendMessage(groupId: String, text: String, user: User) {
-        val currentGroups = _groups.value.toMutableList()
-        val groupIndex = currentGroups.indexOfFirst { it.id == groupId }
-
-        if (groupIndex != -1) {
-            val group = currentGroups[groupIndex]
-            val newMessage = ChatMessage(
-                id = currentTimeMillis().toString(),
-                senderId = user.id,
-                text = text,
-                timestamp = currentTimeMillis()
-            )
-            val updatedMessages = group.chatMessages + newMessage
-            currentGroups[groupIndex] = group.copy(chatMessages = updatedMessages)
-            _groups.value = currentGroups
-        }
+    suspend fun joinGroup(eventId: String) {
+        if (!FirebaseInterface.getInstance().isSignedIn()) return
+        val userId = FirebaseInterface.getInstance().getUserId()
+        FirestoreService.addUserToAvailableGroup(eventId, userId)
+        // Flow will update automatically
     }
+
+    suspend fun leaveGroup(eventId: String, groupId: String) {
+        if (!FirebaseInterface.getInstance().isSignedIn()) return
+        val userId = FirebaseInterface.getInstance().getUserId()
+        FirestoreService.leaveGroup(eventId, groupId, userId)
+        // Flow will update automatically
+    }
+
+    suspend fun sendMessage(eventId: String, groupId: String, text: String, user: User) {
+        val message = ChatMessage(
+            id = currentTimeMillis().toString(),
+            senderId = user.id,
+            text = text,
+            timestamp = currentTimeMillis()
+        )
+        FirestoreService.sendMessage(eventId, groupId, message)
+    }
+    
+    // refreshGroups is no longer needed with Flow
 }

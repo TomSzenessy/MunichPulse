@@ -1,0 +1,37 @@
+Reusing configuration cache.
+> Task :composeApp:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :composeApp:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :composeApp:generateComposeResClass UP-TO-DATE
+> Task :composeApp:generateJsSecrets UP-TO-DATE
+> Task :composeApp:convertXmlValueResourcesForJsMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForJsMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :composeApp:prepareComposeResourcesTaskForJsMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForJsMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :composeApp:generateActualResourceCollectorsForJsMain UP-TO-DATE
+
+> Task :composeApp:compileKotlinJs
+e: file:///Users/tom/Downloads/MunichPulse/composeApp/src/commonMain/kotlin/hackatum/munichpulse/mvp/ui/GroupScreen.kt:81:26 Unresolved reference 'FirebaseInterface'.
+e: file:///Users/tom/Downloads/MunichPulse/composeApp/src/commonMain/kotlin/hackatum/munichpulse/mvp/ui/GroupScreen.kt:290:74 Unresolved reference 'FirebaseInterface'.
+
+> Task :composeApp:compileKotlinJs FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':composeApp:compileKotlinJs'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 11s
+8 actionable tasks: 1 executed, 7 up-to-date
+Configuration cache entry reused.

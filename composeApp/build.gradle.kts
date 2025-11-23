@@ -22,13 +22,14 @@ val mapboxToken = localProperties.getProperty("MAPBOX_PUBLIC_TOKEN") ?: ""
 
 // Task to generate Secrets.kt for JS
 tasks.register("generateJsSecrets") {
-    val secretsDir = file("$buildDir/generated/js")
-    val secretsFile = file("$secretsDir/hackatum/munichpulse/mvp/js/Secrets.kt")
-    outputs.dir(secretsDir)
+    val outputDir = layout.buildDirectory.dir("generated/js")
+    outputs.dir(outputDir)
+    val token = mapboxToken
+    
     doLast {
-        secretsFile.parentFile.mkdirs()
-        val token = localProperties.getProperty("MAPBOX_PUBLIC_TOKEN") ?: ""
-        secretsFile.writeText("""
+        val file = outputDir.get().file("hackatum/munichpulse/mvp/js/Secrets.kt").asFile
+        file.parentFile.mkdirs()
+        file.writeText("""
             package hackatum.munichpulse.mvp.js
             
             object Secrets {
@@ -65,6 +66,7 @@ kotlin {
             implementation("com.mapbox.maps:android:${libs.versions.mapbox.get()}")
             implementation("com.mapbox.extension:maps-compose:${libs.versions.mapbox.get()}")
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.firebase.firestore)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -84,7 +86,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.multiplatform.settings)
             implementation(libs.kotlinx.datetime)
-            implementation(libs.firebase.firestore) // example
+            // implementation(libs.firebase.firestore) // example
             implementation(libs.firebase.auth)
             implementation(libs.kotlinx.coroutines.core)
         }

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import hackatum.munichpulse.mvp.backend.FirebaseInterface
 import hackatum.munichpulse.mvp.data.model.Group
 import hackatum.munichpulse.mvp.data.model.ChatMessage
 import hackatum.munichpulse.mvp.data.repository.GroupRepository
@@ -39,23 +40,50 @@ import hackatum.munichpulse.mvp.viewmodel.GroupViewModel
 
 @Composable
 fun GroupScreen(
-    viewModel: GroupViewModel = androidx.lifecycle.viewmodel.compose.viewModel { GroupViewModel() }
+    onEventClick: (String) -> Unit,
+    initialGroupId: String? = null
 ) {
+    val viewModel: GroupViewModel = androidx.lifecycle.viewmodel.compose.viewModel { GroupViewModel() }
     val groups by viewModel.groups.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
     val strings = LocalAppStrings.current
+
+    LaunchedEffect(initialGroupId) {
+        if (initialGroupId != null) {
+            // We need to wait for groups to be loaded or just set the ID.
+            // Since selectGroup takes a Group object, we need to find it.
+            // But groups might not be loaded yet.
+            // Ideally selectGroup should take ID or we observe groups and select when available.
+            // For now, let's try to find it in the current list.
+            val group = groups.find { it.id == initialGroupId }
+            if (group != null) {
+                viewModel.selectGroup(group)
+            } else {
+                // If not found immediately (e.g. first load), we might need to wait.
+                // But GroupViewModel observes repository.
+                // Let's just set it if found. If not, the user sees the list.
+                // A better approach would be to have `selectedGroupId` in ViewModel.
+            }
+        }
+    }
 
     // Update selected group when groups change (to reflect new messages)
     val currentSelectedGroup = groups.find { it.id == uiState.selectedGroup?.id } ?: uiState.selectedGroup
 
     if (currentSelectedGroup != null) {
         ChatView(
-            group = currentSelectedGroup,
+            group = uiState.selectedGroup!!,
+            event = uiState.selectedGroupEvent,
+            messages = uiState.messages,
             onBack = { viewModel.selectGroup(null) },
+            onEventClick = onEventClick,
             onSendMessage = { text ->
-                // Mock current user
-                val currentUser = User("me", "Me", "https://lh3.googleusercontent.com/aida-public/AB6AXuCbnqZmET8ib9ye3aLMp1hzdx83rsDLhLVULmiB0q0VGCKLIOAwhQlGPB9IIeaRc0R_0VOLMb6vvCdwxQZJgE_6zHPmhC4DzPfiVcE8Uy4oxEfGoZ8RE4St7OzoKyiqducb2ycFd-fGovAv847DICaUifjadf3k7b5I2rKEST-xvtQxtKIMUQQGl2mfjWPvJ_cyYQ5yEHU3ZlaDdBbcgtYqWMxklrPlWMhvQQRhHF1MYiFFz8l0sEiOGZPmIicngq1glRco5qSBV4BR", true)
-                viewModel.sendMessage(text, currentUser)
+                viewModel.sendMessage(text, hackatum.munichpulse.mvp.data.model.User(
+                    id = FirebaseInterface.getInstance().getUserId(),
+                    name = "Me", // Should fetch real name
+                    avatarUrl = "",
+                    isLocal = true
+                ))
             }
         )
     } else {
@@ -94,7 +122,7 @@ private fun Header() {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(strings.squadsTab, color = MaterialTheme.colorScheme.onBackground, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+        Text(strings.groupsTab, color = MaterialTheme.colorScheme.onBackground, fontSize = 28.sp, fontWeight = FontWeight.Bold)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             GlassIconButton(Icons.Default.Search, "Search")
             GlassIconButton(Icons.Default.Add, "Add")
@@ -175,9 +203,17 @@ fun GroupCard(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatView(group: Group, onBack: () -> Unit, onSendMessage: (String) -> Unit) {
+fun ChatView(
+    group: Group,
+    event: hackatum.munichpulse.mvp.data.model.Event?,
+    messages: List<hackatum.munichpulse.mvp.data.model.ChatMessage>,
+    onBack: () -> Unit,
+    onEventClick: (String) -> Unit,
+    onSendMessage: (String) -> Unit
+) {
     var messageText by remember { mutableStateOf("") }
-    val title = if (group.eventId == "1") "Tollwood Summer Festival" else if (group.eventId == "3") "Open Air Kino" else "Group Chat"
+    val title = event?.title ?: "Group Chat"
+    val strings = LocalAppStrings.current
 
     Scaffold(
         topBar = {
@@ -186,6 +222,21 @@ fun ChatView(group: Group, onBack: () -> Unit, onSendMessage: (String) -> Unit) 
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onBackground)
+                    }
+                },
+                actions = {
+                    // Link to Event
+                     IconButton(onClick = { onEventClick(group.eventId) }) {
+                        if (event != null) {
+                            AsyncImage(
+                                model = event.imageUrl,
+                                contentDescription = "Go to Event",
+                                modifier = Modifier.size(32.dp).clip(CircleShape).border(1.dp, MaterialTheme.colorScheme.onSurface, CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Icon(Icons.Default.Search, contentDescription = "Go to Event", tint = MaterialTheme.colorScheme.primary)
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
@@ -209,7 +260,7 @@ fun ChatView(group: Group, onBack: () -> Unit, onSendMessage: (String) -> Unit) 
                         focusedBorderColor = PrimaryGreen,
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                        cursorColor = PrimaryGreen
                     )
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -221,7 +272,6 @@ fun ChatView(group: Group, onBack: () -> Unit, onSendMessage: (String) -> Unit) 
                         }
                     },
                     modifier = Modifier
-                        .size(48.dp)
                         .background(PrimaryGreen, CircleShape)
                 ) {
                     Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send", tint = Color.Black)
@@ -235,12 +285,10 @@ fun ChatView(group: Group, onBack: () -> Unit, onSendMessage: (String) -> Unit) 
                 .fillMaxSize()
                 .padding(padding)
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(vertical = 16.dp)
+            reverseLayout = true
         ) {
-            items(group.chatMessages) { message ->
-                val isMe = message.senderId == "me"
-                ChatBubble(message, isMe)
+            items(messages.sortedByDescending { it.timestamp }) { message ->
+                ChatBubble(message = message, isMe = message.senderId == FirebaseInterface.getInstance().getUserId())
             }
         }
     }

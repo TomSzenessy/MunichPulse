@@ -16,7 +16,7 @@ data class MapEvent(
 data class MapUiState(
     val searchQuery: String = "",
     val selectedFilter: String = "All",
-    val userLocation: Location = Location(48.1351, 11.5820), // Munich Marienplatz (Blue Dot)
+    val userLocation: Location = Location(48.262333, 11.667861), // Garching Forschungszentrum Mathe/Informatik
     val otherPeople: List<Location> = listOf(
         Location(48.1360, 11.5830),
         Location(48.1345, 11.5810),

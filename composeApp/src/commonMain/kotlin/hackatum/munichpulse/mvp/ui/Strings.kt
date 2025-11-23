@@ -20,7 +20,7 @@ data class AppStrings(
     val loginGuest: String,
     val orDivider: String,
     val homeTab: String,
-    val squadsTab: String,
+    val groupsTab: String,
     val mapTab: String,
     val profileTab: String,
     val settingsTitle: String,
@@ -31,7 +31,14 @@ data class AppStrings(
     val trendingHeader: String,
     val nearbyHeader: String,
     val discoverHeader: String,
-    val languageButton: String
+    val languageButton: String,
+    val joinGroup: String,
+    val leaveGroup: String,
+    val openGroup: String,
+    val confirmLeaveGroupTitle: String,
+    val confirmLeaveGroupText: String,
+    val cancel: String,
+    val confirm: String
 )
 
 val EnStrings = AppStrings(
@@ -46,7 +53,7 @@ val EnStrings = AppStrings(
     loginGuest = "Continue as Guest",
     orDivider = "or",
     homeTab = "Home",
-    squadsTab = "Squads",
+    groupsTab = "Groups",
     mapTab = "Map",
     profileTab = "Profile",
     settingsTitle = "Settings",
@@ -57,7 +64,14 @@ val EnStrings = AppStrings(
     trendingHeader = "Trending Now",
     nearbyHeader = "Near You",
     discoverHeader = "Discover New Events",
-    languageButton = "EN"
+    languageButton = "EN",
+    joinGroup = "Join Group",
+    leaveGroup = "Leave Group",
+    openGroup = "Open Group",
+    confirmLeaveGroupTitle = "Leave Group?",
+    confirmLeaveGroupText = "Are you sure you want to leave this group?",
+    cancel = "Cancel",
+    confirm = "Confirm"
 )
 
 val DeStrings = AppStrings(
@@ -72,7 +86,7 @@ val DeStrings = AppStrings(
     loginGuest = "Als Gast fortfahren",
     orDivider = "oder",
     homeTab = "Start",
-    squadsTab = "Squads",
+    groupsTab = "Gruppen",
     mapTab = "Karte",
     profileTab = "Profil",
     settingsTitle = "Einstellungen",
@@ -83,7 +97,14 @@ val DeStrings = AppStrings(
     trendingHeader = "Jetzt angesagt",
     nearbyHeader = "In deiner Nähe",
     discoverHeader = "Neue Events entdecken",
-    languageButton = "DE"
+    languageButton = "DE",
+    joinGroup = "Gruppe beitreten",
+    leaveGroup = "Gruppe verlassen",
+    openGroup = "Gruppe öffnen",
+    confirmLeaveGroupTitle = "Gruppe verlassen?",
+    confirmLeaveGroupText = "Bist du sicher, dass du diese Gruppe verlassen möchtest?",
+    cancel = "Abbrechen",
+    confirm = "Bestätigen"
 )
 
 val LocalAppStrings = staticCompositionLocalOf { EnStrings }

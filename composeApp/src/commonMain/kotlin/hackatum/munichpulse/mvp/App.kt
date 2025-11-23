@@ -38,7 +38,7 @@ fun App() {
     ProvideAppStrings {
         UrbanPulseTheme(useDarkTheme = isDarkMode) {
             val navController = rememberNavController()
-            
+           
             NavHost(navController = navController, startDestination = Screen.Splash.route) {
                 composable(Screen.Splash.route) {
                     SplashScreen(
@@ -64,11 +64,29 @@ fun App() {
                     })
                 }
                 
-                composable(Screen.Main.route) {
+                composable(
+                    route = Screen.Main.route,
+                    arguments = listOf(
+                        navArgument("screen") { type = NavType.StringType; nullable = true },
+                        navArgument("groupId") { type = NavType.StringType; nullable = true }
+                    )
+                ) { backStackEntry ->
+                    val screenArg = backStackEntry.arguments?.getString("screen")
+                    val groupIdArg = backStackEntry.arguments?.getString("groupId")
+                    
+                    val initialScreen = when(screenArg) {
+                        "groups" -> hackatum.munichpulse.mvp.ui.AppScreen.Groups
+                        "map" -> hackatum.munichpulse.mvp.ui.AppScreen.Map
+                        "profile" -> hackatum.munichpulse.mvp.ui.AppScreen.Profile
+                        else -> hackatum.munichpulse.mvp.ui.AppScreen.Home
+                    }
+
                     MainScreen(
                         onEventClick = { eventId ->
                             navController.navigate(Screen.EventDetail.createRoute(eventId))
-                        }
+                        },
+                        initialScreen = initialScreen,
+                        initialGroupId = groupIdArg
                     )
                 }
                 
@@ -79,7 +97,12 @@ fun App() {
                     val eventId = backStackEntry.arguments?.getString("eventId") ?: return@composable
                     EventDetailScreen(
                         eventId = eventId,
-                        onBackClick = { navController.popBackStack() }
+                        onBackClick = { navController.popBackStack() },
+                        onOpenGroup = { groupId ->
+                            navController.navigate(Screen.Main.createRoute(screen = "groups", groupId = groupId)) {
+                                popUpTo(Screen.Main.route) { inclusive = true }
+                            }
+                        }
                     )
                 }
             }

@@ -49,7 +49,45 @@ fun main() {
     // SettingsRepository.init(settings) // TODO: Fix SettingsRepository
 
     val canvasStyle = document.createElement("style")
-    canvasStyle.innerHTML = "html, body { background-color: transparent !important; } canvas { z-index: 1 !important; position: absolute; top: 0; left: 0; background-color: transparent !important; } .mapboxgl-map { z-index: 0 !important; }"
+    canvasStyle.innerHTML = """
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: transparent !important;
+        }
+        
+        /* The Compose Canvas */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            background-color: transparent !important;
+            pointer-events: auto; /* Allow clicks on UI elements */
+        }
+        
+        /* The Map Container */
+        .mapbox-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Changed from -1 to 0 to be below canvas but visible */
+        }
+        
+        /* Mapbox map canvas specifically */
+        .mapboxgl-canvas {
+            z-index: 0;
+        }
+        
+        /* Make sure all UI elements are clickable */
+        .compose-ui-layer {
+            pointer-events: auto;
+            z-index: 2;
+        }
+    """.trimIndent()
     document.head?.appendChild(canvasStyle)
 
     onWasmReady {

@@ -5,12 +5,14 @@ import androidx.lifecycle.viewModelScope
 import hackatum.munichpulse.mvp.data.model.Group
 import hackatum.munichpulse.mvp.data.model.User
 import hackatum.munichpulse.mvp.data.repository.GroupRepository
+import hackatum.munichpulse.mvp.data.repository.MockEventRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel for the Group screen.
@@ -38,7 +40,19 @@ class GroupViewModel : ViewModel() {
      * @param group The group to select, or null to deselect.
      */
     fun selectGroup(group: Group?) {
-        _uiState.update { it.copy(selectedGroup = group) }
+        _uiState.update { it.copy(selectedGroup = group, selectedGroupEvent = null, messages = emptyList()) }
+        if (group != null) {
+            viewModelScope.launch {
+                hackatum.munichpulse.mvp.data.repository.MockEventRepository().getEventById(group.eventId).collect { event ->
+                    _uiState.update { it.copy(selectedGroupEvent = event) }
+                }
+            }
+            viewModelScope.launch {
+                repository.getMessages(group.eventId, group.id).collect { messages ->
+                    _uiState.update { it.copy(messages = messages) }
+                }
+            }
+        }
     }
 
     /**
@@ -49,15 +63,15 @@ class GroupViewModel : ViewModel() {
     fun sendMessage(text: String, user: User) {
         val currentGroup = _uiState.value.selectedGroup
         if (currentGroup != null) {
-            repository.sendMessage(currentGroup.id, text, user)
-            // Optimistically update selected group or rely on flow update
-            // Since groups flow updates, we need to re-select the group from the list to get new messages
-            // This logic is handled in the UI currently, but should be here.
-            // For now, we rely on the repository updating the flow.
+            viewModelScope.launch {
+                repository.sendMessage(currentGroup.eventId, currentGroup.id, text, user)
+            }
         }
     }
 }
 
 data class GroupUiState(
-    val selectedGroup: Group? = null
+    val selectedGroup: Group? = null,
+    val selectedGroupEvent: hackatum.munichpulse.mvp.data.model.Event? = null,
+    val messages: List<hackatum.munichpulse.mvp.data.model.ChatMessage> = emptyList()
 )

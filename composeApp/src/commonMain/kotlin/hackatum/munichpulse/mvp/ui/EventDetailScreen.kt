@@ -21,15 +21,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import hackatum.munichpulse.mvp.viewmodel.EventDetailViewModel
+import androidx.compose.material3.ButtonDefaults
+import coil3.compose.AsyncImage
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDetailScreen(
     eventId: String,
     onBackClick: () -> Unit,
+    onOpenGroup: (String) -> Unit,
     viewModel: EventDetailViewModel = viewModel { EventDetailViewModel() }
 ) {
     LaunchedEffect(eventId) {
@@ -37,6 +42,18 @@ fun EventDetailScreen(
     }
 
     val event by viewModel.event.collectAsState()
+    val currentGroup by viewModel.currentGroupForEvent.collectAsState()
+    val strings = LocalAppStrings.current
+
+    // Auto-redirect to group when joined
+    val wasInGroup = remember { mutableStateOf(currentGroup != null) }
+    LaunchedEffect(currentGroup) {
+        if (!wasInGroup.value && currentGroup != null) {
+            // User just joined a group
+            onOpenGroup(currentGroup!!.id)
+        }
+        wasInGroup.value = currentGroup != null
+    }
 
     Scaffold(
         topBar = {
@@ -55,7 +72,7 @@ fun EventDetailScreen(
             )
         },
         bottomBar = {
-            // Join Event button fixed at the bottom
+            // Join/Open/Leave buttons fixed at the bottom
             Surface(color = MaterialTheme.colorScheme.background) {
                 Row(
                     modifier = Modifier
@@ -63,15 +80,16 @@ fun EventDetailScreen(
                         .navigationBarsPadding()
                         .padding(16.dp)
                         .padding(bottom = 12.dp),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     val openJoinDialog = remember { mutableStateOf(false) }
+                    val openLeaveDialog = remember { mutableStateOf(false) }
 
-                    // Expose the dialog when needed
+                    // Expose the dialogs when needed
                     if (openJoinDialog.value) {
                         AlertDialog(
                             onDismissRequest = { openJoinDialog.value = false },
-                            title = { Text("Join Event") },
+                            title = { Text(strings.joinGroup) },
                             text = {
                                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                                     Text(
@@ -84,7 +102,7 @@ fun EventDetailScreen(
                                         onClick = {
                                             openJoinDialog.value = false
                                             viewModel.addUserToEventGroup(eventId)
-                                                  },
+                                        },
                                         modifier = Modifier.fillMaxWidth()
                                     ) { Text("Join Random Group of 5") }
                                     // Solo join as secondary/outlined option
@@ -97,22 +115,63 @@ fun EventDetailScreen(
                                     ) { Text("Join Solo") }
                                 }
                             },
-                            confirmButton = {
-                                // No primary action here; options are in the content
-                            },
+                            confirmButton = {},
                             dismissButton = {
                                 TextButton(onClick = { openJoinDialog.value = false }) {
-                                    Text("Cancel")
+                                    Text(strings.cancel)
+                                }
+                            }
+                        )
+                    }
+                    
+                    if (openLeaveDialog.value) {
+                        AlertDialog(
+                            onDismissRequest = { openLeaveDialog.value = false },
+                            title = { Text(strings.confirmLeaveGroupTitle) },
+                            text = { Text(strings.confirmLeaveGroupText) },
+                            confirmButton = {
+                                Button(
+                                    onClick = {
+                                        openLeaveDialog.value = false
+                                        currentGroup?.let { viewModel.leaveGroup(eventId, it.id) }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                                ) {
+                                    Text(strings.confirm)
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { openLeaveDialog.value = false }) {
+                                    Text(strings.cancel)
                                 }
                             }
                         )
                     }
 
-                    Button(
-                        onClick = { openJoinDialog.value = true },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Join Event")
+                    if (currentGroup != null) {
+                        // User is in a group
+                        OutlinedButton(
+                            onClick = { openLeaveDialog.value = true },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                        ) {
+                            Text(strings.leaveGroup)
+                        }
+                        
+                        Button(
+                            onClick = { currentGroup?.let { onOpenGroup(it.id) } },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(strings.openGroup)
+                        }
+                    } else {
+                        // User is not in a group
+                        Button(
+                            onClick = { openJoinDialog.value = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(strings.joinGroup)
+                        }
                     }
                 }
             }
@@ -130,41 +189,51 @@ fun EventDetailScreen(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    AsyncImage(
-                        model = currentEvent.imageUrl,
-                        contentDescription = currentEvent.title,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(250.dp),
-                        contentScale = ContentScale.Crop
-                    )
+                    Box(modifier = Modifier.height(300.dp).fillMaxWidth()) {
+                        AsyncImage(
+                            model = currentEvent.imageUrl,
+                            contentDescription = currentEvent.title,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(Color.Transparent, MaterialTheme.colorScheme.background),
+                                        startY = 300f
+                                    )
+                                )
+                        )
+                    }
 
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column(modifier = Modifier.padding(horizontal = 24.dp).offset(y = (-32).dp)) {
                         Text(
                             text = currentEvent.title,
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.headlineLarge,
+                            fontWeight = FontWeight.ExtraBold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
                         
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                         
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = Icons.Default.LocationOn,
                                 contentDescription = "Location",
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(24.dp)
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = currentEvent.location,
-                                style = MaterialTheme.typography.bodyLarge,
+                                style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
 
                         Text(
                             text = "About",
@@ -173,15 +242,16 @@ fun EventDetailScreen(
                             color = MaterialTheme.colorScheme.onBackground
                         )
                         
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
                         Text(
                             text = "Experience the best of Munich at ${currentEvent.title}. Join us for an unforgettable time at ${currentEvent.location}. This event features amazing activities and a great atmosphere.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onBackground
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            lineHeight = 24.sp
                         )
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(32.dp))
 
                         // Fullness indicator
                         Text(
@@ -190,19 +260,21 @@ fun EventDetailScreen(
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         LinearProgressIndicator(
                             progress = { currentEvent.fullnessPercentage / 100f },
-                            modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)),
+                            modifier = Modifier.fillMaxWidth().height(12.dp).clip(RoundedCornerShape(6.dp)),
                             color = MaterialTheme.colorScheme.primary,
                             trackColor = MaterialTheme.colorScheme.surfaceVariant,
                         )
                         Text(
                             text = "${currentEvent.fullnessPercentage}% Full",
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.align(Alignment.End).padding(top = 4.dp)
+                            modifier = Modifier.align(Alignment.End).padding(top = 8.dp)
                         )
+                        
+                        Spacer(modifier = Modifier.height(80.dp)) // Space for bottom bar
                     }
                 }
             } ?: Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
