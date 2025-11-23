@@ -78,7 +78,7 @@ class FirebaseInterface {
             return INSTANCE!!
 
         }
-        
+
     }
 
     // Function should only ever be used after login!

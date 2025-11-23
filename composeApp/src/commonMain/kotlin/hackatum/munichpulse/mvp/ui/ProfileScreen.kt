@@ -123,7 +123,25 @@ fun SettingsSection(viewModel: ProfileViewModel) {
 fun ProfileHeader(name: String, avatarUrl: String?, isLocal: Boolean) {
     val strings = LocalAppStrings.current
     Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)) {
-        Spacer(modifier = Modifier.height(20.dp))
+        // Top Bar
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = { /* Back */ }) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onBackground)
+            }
+            Text(
+                strings.profileTab,
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+            Spacer(modifier = Modifier.size(48.dp)) // Balance back button
+        }
+
         // Avatar and Stats
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),

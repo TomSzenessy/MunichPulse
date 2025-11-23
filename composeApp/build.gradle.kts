@@ -22,21 +22,40 @@ val mapboxToken = localProperties.getProperty("MAPBOX_PUBLIC_TOKEN") ?: ""
 
 // Task to generate Secrets.kt for JS
 tasks.register("generateJsSecrets") {
-    val secretsDir = file("$buildDir/generated/js")
-    val secretsFile = file("$secretsDir/hackatum/munichpulse/mvp/js/Secrets.kt")
-    outputs.dir(secretsDir)
+    val outputDir = layout.buildDirectory.dir("generated/js")
+    outputs.dir(outputDir)
+    val token = mapboxToken
+
     doLast {
-        secretsFile.parentFile.mkdirs()
-        val token = localProperties.getProperty("MAPBOX_PUBLIC_TOKEN") ?: ""
-        secretsFile.writeText("""
+        val file = outputDir.get().file("hackatum/munichpulse/mvp/js/Secrets.kt").asFile
+        file.parentFile.mkdirs()
+        file.writeText("""
             package hackatum.munichpulse.mvp.js
             
             object Secrets {
                 const val MAPBOX_PUBLIC_TOKEN = "$token"
             }
         """.trimIndent())
-    }
+        }
 }
+
+//// Task to generate Secrets.kt for JS
+//tasks.register("generateJsSecrets") {
+//    val secretsDir = file("$buildDir/generated/js")
+//    val secretsFile = file("$secretsDir/hackatum/munichpulse/mvp/js/Secrets.kt")
+//    outputs.dir(secretsDir)
+//    doLast {
+//        secretsFile.parentFile.mkdirs()
+//        val token = localProperties.getProperty("MAPBOX_PUBLIC_TOKEN") ?: ""
+//        secretsFile.writeText("""
+//            package hackatum.munichpulse.mvp.js
+//
+//            object Secrets {
+//                const val MAPBOX_PUBLIC_TOKEN = "$token"
+//            }
+//        """.trimIndent())
+//    }
+//}
 
 kotlin {
     androidTarget {

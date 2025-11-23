@@ -6,6 +6,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
 
@@ -15,7 +16,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven {
             url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
-            
+
             authentication {
                 create<BasicAuthentication>("basic")
             }
@@ -39,7 +40,7 @@ dependencyResolutionManagement {
                 password = token
             }
 
-            
+
         }
     }
 }
