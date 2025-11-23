@@ -41,7 +41,7 @@ class AndroidMapRenderer : MapRenderer {
         state.cameraPosition?.let { camera ->
             viewportState.flyTo(
                 CameraOptions.Builder()
-                    .center(Point.fromLngLat(camera.center.longitude, camera.center.latitude))
+                    .center(Point.fromLngLat(location.longitude, location.latitude))
                     .zoom(camera.zoom)
                     .build(),
                 MapAnimationOptions.Builder().duration(300).build()
