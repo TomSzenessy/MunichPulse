@@ -45,4 +45,11 @@ object ViewController {
             FirebaseInterface.getInstance().linkWithGoogle(idToken, name, isLocal)
         }
     }
+
+    // Sign in with email and password (works on Android and Web via dev.gitlive)
+    fun signInWithEmailPassword(email: String, password: String, name: String, isLocal: Boolean) {
+        CoroutineScope(Dispatchers.Default).launch {
+            FirebaseInterface.getInstance().signInWithEmailPassword(email, password, name, isLocal)
+        }
+    }
 }

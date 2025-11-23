@@ -84,6 +84,23 @@ class FirebaseInterface {
 
     }
 
+    /**
+     * Sign in with email and password. If the account does not exist yet, this will
+     * attempt to create it and then sign in. After successful auth, we upsert the user
+     * document to ensure cross-device availability of profile fields.
+     */
+    suspend fun signInWithEmailPassword(email: String, password: String, name: String, isLocal: Boolean) {
+        val auth = Firebase.auth
+        try {
+            auth.signInWithEmailAndPassword(email, password)
+        } catch (t: Throwable) {
+            // If sign-in fails (e.g., user not found), try to create the user
+            auth.createUserWithEmailAndPassword(email, password)
+        }
+        // We don't know the name/isLocal here; preserve existing with merge
+        upsertUser(name = name, isLocal = isLocal)
+    }
+
     // Function should only ever be used after login!
     fun getUserId(): String {
         return Firebase.auth.currentUser!!.uid
