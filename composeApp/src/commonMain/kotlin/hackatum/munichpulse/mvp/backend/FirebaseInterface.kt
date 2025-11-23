@@ -241,6 +241,8 @@ class FirebaseInterface {
         }
 
         return eventList.mapNotNull { it }
+        */
+        return emptyList()
     }
 
     /**

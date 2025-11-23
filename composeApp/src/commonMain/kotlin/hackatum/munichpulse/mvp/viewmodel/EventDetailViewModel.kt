@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import hackatum.munichpulse.mvp.DataController
 import hackatum.munichpulse.mvp.data.model.Event
 import hackatum.munichpulse.mvp.data.repository.EventRepository
-import hackatum.munichpulse.mvp.data.repository.MockEventRepository
 import hackatum.munichpulse.mvp.data.repository.GroupRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

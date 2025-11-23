@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import hackatum.munichpulse.mvp.data.model.Group
 import hackatum.munichpulse.mvp.data.model.User
 import hackatum.munichpulse.mvp.data.repository.GroupRepository
-import hackatum.munichpulse.mvp.data.repository.MockEventRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -43,7 +42,7 @@ class GroupViewModel : ViewModel() {
         _uiState.update { it.copy(selectedGroup = group, selectedGroupEvent = null, messages = emptyList()) }
         if (group != null) {
             viewModelScope.launch {
-                hackatum.munichpulse.mvp.data.repository.MockEventRepository().getEventById(group.eventId).collect { event ->
+                hackatum.munichpulse.mvp.data.repository.EventRepository().getEventById(group.eventId).collect { event ->
                     _uiState.update { it.copy(selectedGroupEvent = event) }
                 }
             }

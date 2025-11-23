@@ -30,16 +30,13 @@ tasks.register("generateJsSecrets") {
         val file = outputDir.get().file("hackatum/munichpulse/mvp/js/Secrets.kt").asFile
         file.parentFile.mkdirs()
         file.writeText("""
-        val file = outputDir.get().file("hackatum/munichpulse/mvp/js/Secrets.kt").asFile
-        file.parentFile.mkdirs()
-        file.writeText("""
             package hackatum.munichpulse.mvp.js
             
             object Secrets {
                 const val MAPBOX_PUBLIC_TOKEN = "$token"
             }
         """.trimIndent())
-        }
+    }
 }
 
 //// Task to generate Secrets.kt for JS
