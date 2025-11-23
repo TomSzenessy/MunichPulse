@@ -8,15 +8,16 @@ actual object LocationGetter {
 
     init {
         if (js("!!window.navigator.geolocation") as Boolean) {
-            window.navigator.geolocation.watchPosition(
-                successCallback = { position ->
+            val navigator = window.navigator.asDynamic()
+            navigator.geolocation.watchPosition(
+                { position: dynamic ->
                     currentLocation = Location(
-                        latitude = position.coords.latitude,
-                        longitude = position.coords.longitude
+                        latitude = position.coords.latitude as Double,
+                        longitude = position.coords.longitude as Double
                     )
                 },
-                errorCallback = { 
-                    console.error("Error getting location: ${it.message}")
+                { error: dynamic -> 
+                    console.error("Error getting location: ${error.message}")
                 }
             )
         }
