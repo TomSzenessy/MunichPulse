@@ -12,6 +12,17 @@ This project follows the MVVM architecture. Please refer to [architecture.md](ar
     Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
     folder is the appropriate location.
 
+### Analytics (PostHog)
+
+The Android and JS web builds send analytics to PostHog. Add the project API key and host to `local.properties` (the file is not in git):
+
+```properties
+POSTHOG_API_KEY=phc_...
+POSTHOG_HOST=https://eu.i.posthog.com
+```
+
+If one of the two values is missing, the app does not start PostHog.
+
 ### Build and Run Android Application
 
 To build and run the development version of the Android app, use the run configuration from the run widget

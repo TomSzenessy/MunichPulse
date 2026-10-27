@@ -20,6 +20,8 @@ if (localPropertiesFile.exists()) {
 
 val mapboxToken = localProperties.getProperty("MAPBOX_PUBLIC_TOKEN") ?: ""
 val googleWebClientId = localProperties.getProperty("GOOGLE_WEB_CLIENT_ID") ?: ""
+val posthogApiKey = localProperties.getProperty("POSTHOG_API_KEY") ?: ""
+val posthogHost = localProperties.getProperty("POSTHOG_HOST") ?: ""
 
 // Task to generate Secrets.kt for JS
 tasks.register("generateJsSecrets") {
@@ -27,6 +29,8 @@ tasks.register("generateJsSecrets") {
     outputs.dir(outputDir)
     val token = mapboxToken
     val clientId = googleWebClientId
+    val phApiKey = posthogApiKey
+    val phHost = posthogHost
     
     doLast {
         val file = outputDir.get().file("hackatum/munichpulse/mvp/js/Secrets.kt").asFile
@@ -37,6 +41,8 @@ tasks.register("generateJsSecrets") {
             object Secrets {
                 const val MAPBOX_PUBLIC_TOKEN = "$token"
                 const val GOOGLE_WEB_CLIENT_ID = "$clientId"
+                const val POSTHOG_API_KEY = "$phApiKey"
+                const val POSTHOG_HOST = "$phHost"
             }
         """.trimIndent())
     }
@@ -88,6 +94,7 @@ kotlin {
             implementation("com.mapbox.extension:maps-compose:${libs.versions.mapbox.get()}")
             implementation(libs.ktor.client.okhttp)
             implementation(libs.firebase.firestore)
+            implementation("com.posthog:posthog-android:3.+")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -137,6 +144,8 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "MAPBOX_PUBLIC_TOKEN", "\"${localProperties.getProperty("MAPBOX_PUBLIC_TOKEN") ?: ""}\"")
+        buildConfigField("String", "POSTHOG_API_KEY", "\"$posthogApiKey\"")
+        buildConfigField("String", "POSTHOG_HOST", "\"$posthogHost\"")
     }
     buildFeatures {
         buildConfig = true
