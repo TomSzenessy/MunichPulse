@@ -3,7 +3,9 @@ package hackatum.munichpulse.mvp
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import hackatum.munichpulse.mvp.backend.FirebaseInterface
+import hackatum.munichpulse.mvp.js.Secrets
 import kotlinx.browser.document
+import kotlinx.browser.window
 import org.jetbrains.skiko.wasm.onWasmReady
 import org.w3c.dom.HTMLElement
 import kotlin.js.JsModule
@@ -43,6 +45,14 @@ fun main() {
         console.log("Firebase initialized successfully")
     } catch (e: Throwable) {
         console.error("Failed to initialize Firebase", e)
+    }
+
+    // Initialize PostHog (loader snippet is in index.html)
+    if (Secrets.POSTHOG_API_KEY.isNotEmpty() && Secrets.POSTHOG_HOST.isNotEmpty()) {
+        val posthogOptions: dynamic = js("({})")
+        posthogOptions.api_host = Secrets.POSTHOG_HOST
+        posthogOptions.defaults = "2026-08-30"
+        window.asDynamic().posthog.init(Secrets.POSTHOG_API_KEY, posthogOptions)
     }
 
     // Initialize Persistence
